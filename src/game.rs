@@ -43,35 +43,29 @@ impl<'a> GamePosition<'a> {
     fn next_unit(&self) -> Option<GamePosition<'a>> {
         let board = self.game.board.place_unit(&self.unit);
         if self.next_source + 1 < self.game.source.len() {
-            Some(GamePosition {
+            return Some(GamePosition {
                 board: board,
                 unit: self.game.source[self.next_source].clone(),
                 next_source: self.next_source + 1,
                 ..*self
-            })
+            });
         }
-        else {
-            None
-        }
+        None
     }
 
     fn step(&self, c: &Command) -> Option<GamePosition<'a>> {
         let unit = self.unit.apply(c);
         if self.game.board.check_unit_position(&unit) {
             if self.game.board.get_correct_commands(&unit).len() == 0 {
-                self.next_unit()
+                return self.next_unit();
             }
-            else {
-                Some(GamePosition {
-                    unit: unit,
-                    board: self.board.clone(),
-                    ..*self
-                })
-            }
+            return Some(GamePosition {
+                unit: unit,
+                board: self.board.clone(),
+                ..*self
+            });
         }
-        else {
-            None
-        }
+        None
     }
 }
 
