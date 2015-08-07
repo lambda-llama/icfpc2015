@@ -41,9 +41,9 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
 pub fn best_position(unit: &Unit, board: &Board) -> Option<Unit> {
     for y in 0..board.height {
         for x in 0..board.width {
-            let moved_unit = unit.move_to(Coordinate  {x: x as i32, y: y as i32});
-            if board.check_unit_position(&moved_unit) {
-                return Some(moved_unit)
+            let moved = unit.move_to(Coordinate  {x: x as i32, y: y as i32});
+            if board.check_unit_position(&moved) {
+                return Some(moved)
             }
         }
     }

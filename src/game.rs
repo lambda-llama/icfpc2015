@@ -131,7 +131,8 @@ impl Unit {
 
     pub fn move_to(&self, new_pivot: Coordinate) -> Unit {
         Unit {
-            cells: self.cells.clone(),
+            cells: self.cells.iter()
+                .map(|c| c - self.pivot + new_pivot).collect(),
             pivot: new_pivot
         }
     }
