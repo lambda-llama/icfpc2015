@@ -9,11 +9,18 @@ pub struct Board {
 
 impl Board {
     pub fn check_unit_position(&self, unit: &Unit) -> bool {
-        unimplemented!()
+        for cell in &unit.cells {
+            if (self.cells[cell.x as usize][cell.y as usize]) {
+                return false
+            }
+        }
+        true
     }
 
-    pub fn get_correct_commands(&self, unit: &Unit) -> Vec<Command> {
-        unimplemented!()
+    pub fn get_correct_commands(&self, unit: &Unit) -> Vec<&Command> {
+        ALL_COMMANDS.iter().filter(|c| {
+            self.check_unit_position(&unit.apply(c))
+        }).collect()
     }
 
     fn place_unit(&self, unit: &Unit) -> Board {
@@ -24,7 +31,6 @@ impl Board {
             assert!(!clone.cells[x][y]);
             clone.cells[x][y] = true
         }
-
         clone
     }
 }
