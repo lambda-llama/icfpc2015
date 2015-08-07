@@ -1,14 +1,14 @@
 extern crate hex2d;
 extern crate rustc_serialize;
 
-mod board;
+mod formats;
 mod game;
 
 use rustc_serialize::json;
 use std::io::Read;
 use std::fs;
 
-use board::Board;
+use formats::Board;
 
 fn main() {
     let mut problem = String::new();
