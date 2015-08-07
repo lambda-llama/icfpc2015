@@ -21,12 +21,14 @@ class HexagonGenerator(object):
             yield y
 
 
-def main(path):
+def main(path, edge=16):
     board = json.load(open(path))
-    image = Image.new('RGB', (256, 256), 'white')
-    draw = ImageDraw.Draw(image)
-    hexagon_generator = HexagonGenerator(16, board["width"], board["height"])
+    hexagon_generator = HexagonGenerator(edge, board["width"], board["height"])
     cells = board["cells"]
+    image = Image.new('RGB', (board["width"] * edge * 2,
+                              board["height"] * edge * 2),
+                      'white')
+    draw = ImageDraw.Draw(image)
     for row in range(board["height"]):
         for col in range(board["width"]):
             hexagon = hexagon_generator(row, col)
