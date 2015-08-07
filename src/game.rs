@@ -1,16 +1,18 @@
 use std::ops::Add;
+use std::convert::From;
+use formats;
 
-use hex2d::{self, Angle, Coordinate, Direction, Position, ToCoordinate};
+use hex2d::{self, Angle, Direction, Position, ToCoordinate};
 
-struct Board {
-    width: usize,
-    height: usize,
-    cells: Vec<Vec<bool>>
+pub struct Board {
+    pub width: usize,
+    pub height: usize,
+    pub cells: Vec<Vec<bool>>
 }
 
-struct Game {
-    inial_board: Board,
-    source: Vec<Unit>
+pub struct Game {
+    pub initial_board: Board,
+    pub source: Vec<Unit>
 }
 
 struct GamePosition {
@@ -33,9 +35,9 @@ impl GamePosition {
 }
 
 #[derive(Clone)]
-struct Unit {
-    cells: Vec<hex2d::Coordinate>,
-    pivot: hex2d::Coordinate
+pub struct Unit {
+    pub cells: Vec<hex2d::Coordinate>,
+    pub pivot: hex2d::Coordinate
 }
 
 enum Command {
