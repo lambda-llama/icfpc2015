@@ -9,7 +9,7 @@ use rustc_serialize::json;
 use std::io::Read;
 use std::fs;
 
-fn fetch_problem(i: u64) -> formats::Board {
+fn fetch_game(i: u64) -> formats::Board {
     let path = format!("./problems/problem_{}.json", i);
     println!("{}", path);
     let mut data = String::new();
@@ -18,5 +18,7 @@ fn fetch_problem(i: u64) -> formats::Board {
 }
 
 fn main() {
-    println!("{:?}", fetch_problem(0));
+    let games = fetch_game(0).games();
+    let problem = games.into_iter().next().unwrap().initial_board;
+    println!("{}", json::encode(&problem).unwrap());
 }

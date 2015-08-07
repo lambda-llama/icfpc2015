@@ -14,11 +14,11 @@ pub struct Board {
 }
 
 impl Board {
-    fn games(&self) -> Vec<game::Game> {
+    pub fn games(&self) -> Vec<game::Game> {
         self.sourceSeeds.iter().map(|&s| self.game_for_seed(s)).collect()
     }
 
-    fn game_for_seed(&self, seed: u64) -> game::Game {
+    pub fn game_for_seed(&self, seed: u64) -> game::Game {
         let mut cells = vec![vec![false; self.width]; self.height];
         for c in self.filled.iter() {
             cells[c.y as usize][c.x as usize] = true;
@@ -40,7 +40,7 @@ impl Board {
         }).collect();
 
         let source = get_source_seq(self.sourceLength, seed).iter()
-            .map(|&i| units[i].clone())
+            .map(|&i| units[i % units.len()].clone())
             .collect();
 
         game::Game {
