@@ -38,7 +38,7 @@ impl Board {
         }
 
         clone
-    }
+    }   
 }
 
 impl<'a> GamePosition<'a> {
@@ -92,10 +92,19 @@ pub struct Unit {
     pub pivot: hex2d::Coordinate
 }
 
-enum Command {
+pub enum Command {
     Move(hex2d::Direction),
     Rotate(hex2d::Angle)
 }
+
+static ALL_COMMANDS : [Command; 6] = [
+    Command::Move(Direction::YX),
+    Command::Move(Direction::XY),
+    Command::Move(Direction::ZX),
+    Command::Move(Direction::ZY),
+    Command::Rotate(Angle::Left),
+    Command::Rotate(Angle::Right)
+];
 
 impl Unit {
     fn apply(&self, c: &Command) -> Unit {
