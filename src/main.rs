@@ -6,6 +6,7 @@ mod game;
 mod scoring;
 mod strategy;
 
+use hex2d::{Direction};
 use rustc_serialize::json;
 use std::io::Read;
 use std::fs;
@@ -19,7 +20,10 @@ fn fetch_game(i: u64) -> formats::Board {
 }
 
 fn main() {
-    let games = fetch_game(0).games();
-    let problem = games.into_iter().next().unwrap().board;
-    println!("{}", json::encode(&problem).unwrap());
+    let game = fetch_game(0).games().into_iter().next().unwrap();
+    let mut moves: Vec<game::Command> = Vec::new();
+    moves.push(game::Command::Move(Direction::ZX));
+    for position in game.play(&moves) {
+        println!("{}", "here");
+    }
 }

@@ -41,7 +41,7 @@ pub struct Game {
 }
 
 impl Game {
-    fn play<'a>(&'a self, moves: &Vec<Command>) -> Vec<GamePosition<'a>> {
+    pub fn play<'a>(&'a self, moves: &Vec<Command>) -> Vec<GamePosition<'a>> {
         let mut result: Vec<GamePosition<'a>>  = Vec::new();
         let start = GamePosition::start(self);
         result.push(start);
@@ -113,7 +113,7 @@ pub enum Command {
     Rotate(hex2d::Angle)
 }
 
-static ALL_COMMANDS : [Command; 6] = [
+pub static ALL_COMMANDS : [Command; 6] = [
     Command::Move(Direction::YX),
     Command::Move(Direction::XY),
     Command::Move(Direction::ZX),
