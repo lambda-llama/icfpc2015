@@ -11,8 +11,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     q.push_back(source.clone());
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
     let mut seen: HashSet<Unit> = HashSet::new();
-    while (!q.is_empty()) {
-        let tip = q.pop_front().unwrap();
+    while let Some(tip) = q.pop_front() {
         if tip == *target {
             break;
         }

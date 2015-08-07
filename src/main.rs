@@ -4,7 +4,7 @@ extern crate rustc_serialize;
 mod formats;
 mod board;
 mod game;
-mod scoring;
+// mod scoring;
 mod strategy;
 
 use hex2d::{Direction};
@@ -24,7 +24,7 @@ fn main() {
     let game = fetch_game(0).games().into_iter().next().unwrap();
     let mut moves: Vec<game::Command> = Vec::new();
     moves.push(game::Command::Move(Direction::ZX));
-    for position in game.play(&moves) {
+    for _ in game.play(&moves) {
         println!("{}", "here");
     }
 }
