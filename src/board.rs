@@ -56,8 +56,8 @@ impl Board {
     }
 
     fn is_valid(&self, x: i32, y: i32) -> bool {
-        (0 <= x && x <= self.width as i32) &&
-        (0 <= y && y <= self.height as i32)
+        (0 <= x && x < self.width as i32) &&
+        (0 <= y && y < self.height as i32)
     }
 
 }
