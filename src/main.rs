@@ -2,6 +2,7 @@ extern crate hex2d;
 extern crate rustc_serialize;
 
 mod formats;
+mod board;
 mod game;
 mod scoring;
 mod strategy;

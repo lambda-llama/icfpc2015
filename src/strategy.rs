@@ -2,7 +2,8 @@ use std::collections::{VecDeque, HashSet, HashMap};
 
 use hex2d::{Angle, Coordinate};
 
-use game::{Board, Command, Unit, ALL_COMMANDS};
+use game::{Command, Unit, ALL_COMMANDS};
+use board::Board;
 
 fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     let mut q = VecDeque::new();
@@ -10,17 +11,17 @@ fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
     let mut seen: HashSet<Unit> = HashSet::new();
     while (!q.is_empty()) {
-        let tip = q.pop_front().unwrap();        
+        let tip = q.pop_front().unwrap();
         if tip == *target {
             break;
         }
-        
+
         for cj in ALL_COMMANDS.iter() {
             let next = tip.apply(cj);
-            if !seen.contains(&next) && board.check_unit_position(&next) {            
+            if !seen.contains(&next) && board.check_unit_position(&next) {
                 q.push_back(next.clone());
-                parents.insert(next, (*cj, tip.clone()));                
-            }            
+                parents.insert(next, (*cj, tip.clone()));
+            }
         }
 
         seen.insert(tip);
@@ -30,7 +31,7 @@ fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     let mut tip = target;
     while tip != source && parents.contains_key(&tip) {
         let (c, ref next) = parents[tip];
-        path.push(c);        
+        path.push(c);
         tip = next;
     }
 

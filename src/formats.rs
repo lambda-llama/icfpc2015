@@ -1,5 +1,8 @@
 use hex2d;
+
 use game;
+use board;
+
 
 #[derive(Debug, RustcDecodable, RustcEncodable)]
 #[allow(non_snake_case)]
@@ -24,7 +27,7 @@ impl Board {
             cells[c.y as usize][c.x as usize] = true;
         }
 
-        let board = game::Board {
+        let board = board::Board {
             width: self.width,
             height: self.height,
             cells: cells
