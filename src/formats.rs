@@ -24,7 +24,7 @@ impl Board {
             cells[c.y as usize][c.x as usize] = true;
         }
 
-        let initial_board = game::Board {
+        let board = game::Board {
             width: self.width,
             height: self.height,
             cells: cells
@@ -44,7 +44,7 @@ impl Board {
             .collect();
 
         game::Game {
-            initial_board: initial_board,
+            board: board,
             source: source
         }
     }

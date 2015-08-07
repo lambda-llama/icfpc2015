@@ -1,11 +1,10 @@
-use std::ops::Add;
+use hex2d::{self, Angle, Coordinate, Direction};
 
-use hex2d::{self, Angle, Coordinate, Direction, Position, ToCoordinate};
-
-struct Board {
-    width: usize,
-    height: usize,
-    cells: Vec<Vec<bool>>
+#[derive(RustcEncodable)]
+pub struct Board {
+    pub width: usize,
+    pub height: usize,
+    pub cells: Vec<Vec<bool>>
 }
 
 pub struct Game {
@@ -41,14 +40,14 @@ impl GamePosition {
         }
     }
 
-    fn step(&self, c: Command) -> Option<GamePosition> {
+    fn step(&self, c: &Command) -> Option<GamePosition> {
         let unit = self.unit.apply(c);
-        if self.game.board.check_unit_position(unit) {
-            if self.game.get_correct_commands(unit).len() == 0 {
-
+        if self.game.board.check_unit_position(&unit) {
+            if self.game.board.get_correct_commands(&unit).len() == 0 {
+                unimplemented!();
             }
             else {
-
+                unimplemented!();
             }
         }
         else {

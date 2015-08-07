@@ -19,6 +19,6 @@ fn fetch_game(i: u64) -> formats::Board {
 
 fn main() {
     let games = fetch_game(0).games();
-    let problem = games.into_iter().next().unwrap().initial_board;
+    let problem = games.into_iter().next().unwrap().board;
     println!("{}", json::encode(&problem).unwrap());
 }
