@@ -108,6 +108,7 @@ impl<'a> GamePosition<'a> {
     }
 }
 
+#[derive(Clone, Copy)]
 pub enum Command {
     Move(hex2d::Direction),
     Rotate(hex2d::Angle)
@@ -122,14 +123,14 @@ pub static ALL_COMMANDS : [Command; 6] = [
     Command::Rotate(Angle::Right)
 ];
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Unit {
     pub cells: Vec<hex2d::Coordinate>,
     pub pivot: hex2d::Coordinate
 }
 
 impl Unit {
-    fn apply(&self, c: &Command) -> Unit {
+    pub fn apply(&self, c: &Command) -> Unit {
         match c {
             &Command::Move(d)   => {
                 assert!(d == Direction::YX ||  // West
