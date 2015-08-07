@@ -8,6 +8,26 @@ struct Board {
     cells: Vec<Vec<bool>>
 }
 
+struct Game {
+    inial_board: Board,
+    source: Vec<Unit>
+}
+
+struct GamePosition {
+    game: Game,
+    unit: Unit
+}
+
+impl GamePosition {
+    fn start(g: Game) -> GamePosition {
+        unimplemented!();
+    }
+
+    fn step(&self, c: Command) -> GamePosition {
+        unimplemented!();
+    }
+}
+
 #[derive(Clone)]
 struct Unit {
     cells: Vec<hex2d::Coordinate>,
@@ -34,9 +54,9 @@ impl Unit {
                 assert!(a == Angle::Right || a == Angle::Left);
                 self.cells.iter()
                     .map(|c| c.rotate_around(self.pivot, a)).collect()
-            }            
+            }
         };
-        
-        Unit { cells: cells, ..*self }        
+
+        Unit { cells: cells, ..*self }
     }
 }
