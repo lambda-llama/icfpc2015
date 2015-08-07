@@ -38,4 +38,8 @@ impl Unit {
             }
         }            
     }
+
+    fn apply_sequence(&self, cs: &Vec<Command>) -> Unit {
+
+    }
 }
