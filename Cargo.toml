@@ -5,6 +5,6 @@ authors = ["Aleksey Kladov <aleksey.kladov@gmail.com>"]
 
 
 [dependencies]
-rand="0.3.0"
-rustc-serialize="0.3"
-hex2d="0.0.14"
+rand = "0.3.0"
+rustc-serialize = "0.3"
+hex2d = "0.0.14"

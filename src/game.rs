@@ -8,9 +8,9 @@ struct Board {
     cells: Vec<Vec<bool>>
 }
 
-struct Game {
-    board: Board,
-    source: Vec<Unit>
+pub struct Game {
+    pub board: Board,
+    pub source: Vec<Unit>
 }
 
 struct GamePosition {
@@ -58,9 +58,9 @@ impl GamePosition {
 }
 
 #[derive(Clone)]
-struct Unit {
-    cells: Vec<hex2d::Coordinate>,
-    pivot: hex2d::Coordinate
+pub struct Unit {
+    pub cells: Vec<hex2d::Coordinate>,
+    pub pivot: hex2d::Coordinate
 }
 
 enum Command {
