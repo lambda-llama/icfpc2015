@@ -20,11 +20,11 @@ struct GamePosition<'a> {
 }
 
 impl Board {
-    fn check_unit_position(&self, unit: &Unit) -> bool {
+    pub fn check_unit_position(&self, unit: &Unit) -> bool {
         unimplemented!()
     }
 
-    fn get_correct_commands(&self, unit: &Unit) -> Vec<Command> {
+    pub fn get_correct_commands(&self, unit: &Unit) -> Vec<Command> {
         unimplemented!()
     }
 
@@ -38,7 +38,7 @@ impl Board {
         }
 
         clone
-    }   
+    }
 }
 
 impl<'a> GamePosition<'a> {
@@ -125,6 +125,13 @@ impl Unit {
                     .map(|c| c.rotate_around(self.pivot, a)).collect();
                 Unit { cells: cells, ..*self }
             }
+        }
+    }
+
+    fn move_to(&self, new_pivot: hex2d::Coordinate) -> Unit {
+        Unit {
+            cells: self.cells.clone(),
+            pivot: new_pivot
         }
     }
 }
