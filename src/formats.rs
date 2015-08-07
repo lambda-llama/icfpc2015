@@ -70,10 +70,8 @@ pub struct Solution {
     problemId: u64,
     seed: u64,
     tag: String,
-    solution: Vec<Command>
+    solution: String,
 }
-
-type Command = char;
 
 impl From<Cell> for hex2d::Coordinate {
     fn from(c: Cell) -> hex2d::Coordinate {
