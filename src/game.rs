@@ -34,7 +34,7 @@ impl<'a> GamePosition<'a> {
     fn start(g: &Game) -> GamePosition {
         GamePosition {
             game: g,
-            board : g.board.clone(),
+            board: g.board.clone(),
             unit: g.source[0].clone(),
             next_source: 1
         }
