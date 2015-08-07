@@ -4,6 +4,7 @@ use formats;
 
 use hex2d::{self, Angle, Direction, Position, ToCoordinate};
 
+#[derive(RustcEncodable)]
 pub struct Board {
     pub width: usize,
     pub height: usize,
