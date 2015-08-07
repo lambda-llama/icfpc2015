@@ -92,11 +92,22 @@ pub static ALL_COMMANDS : [Command; 6] = [
 
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Unit {
-    pub cells: Vec<Coordinate>,
+    cells: Vec<Coordinate>,
     pub pivot: Coordinate
 }
 
 impl Unit {
+    pub fn new(pivot: Coordinate, cells: Vec<Coordinate>) -> Unit {
+        Unit {
+            pivot: pivot,
+            cells: cells
+        }
+    }
+
+    pub fn iter<'a>(&'a self) -> Box<Iterator<Item=(i32, i32)> + 'a> {
+        Box::new(self.cells.iter().map(|c| (c.x, c.y)))
+    }
+
     pub fn apply(&self, c: &Command) -> Unit {
         match c {
             &Command::Move(d)   => {

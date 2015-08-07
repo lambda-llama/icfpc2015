@@ -27,12 +27,10 @@ impl Board {
 
 
         let units: Vec<game::Unit> = self.units.iter().map(|u| {
-            game::Unit {
-                cells: u.members.iter()
+            let cells = u.members.iter()
                     .map(|&c| hex2d::Coordinate::from(c))
-                    .collect(),
-                pivot: hex2d::Coordinate::from(u.pivot)
-            }
+                    .collect();
+            game::Unit::new(hex2d::Coordinate::from(u.pivot), cells)
         }).collect();
 
         let source = get_source_seq(self.sourceLength, seed).iter()

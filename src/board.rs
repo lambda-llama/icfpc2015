@@ -29,7 +29,7 @@ impl Board {
     /// Returns `true` if a `unit` is within board boundaries and does
     /// not overlap any of the occupied cells.
     pub fn check_unit_position(&self, unit: &Unit) -> bool {
-        unit.cells.iter().all(|c| self.is_valid(c.x, c.y) && self.is_free(c.x, c.y))
+        unit.iter().all(|(x, y)| self.is_valid(x, y) && self.is_free(x, y))
     }
 
     pub fn get_correct_commands(&self, unit: &Unit) -> Vec<&Command> {
@@ -45,9 +45,9 @@ impl Board {
 
     pub fn place_unit(&self, unit: &Unit) -> Board {
         let mut cells = (*self.cells).clone();
-        for cell in unit.cells.iter() {
-            assert!(self.is_free(cell.x, cell.y));
-            cells[cell.y as usize][cell.x as usize] = true;
+        for (x, y) in unit.iter() {
+            assert!(self.is_free(x, y));
+            cells[y as usize][x as usize] = true;
         }
         Board {
             cells: Rc::new(cells),
