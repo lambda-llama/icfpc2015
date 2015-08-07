@@ -1,6 +1,6 @@
-use std::ops::{Add};
+use std::ops::Add;
 
-use hex2d::{self, Angle, Coordinate, Direction, Position};
+use hex2d::{self, Angle, Coordinate, Direction, Position, ToCoordinate};
 
 struct Board {
     width: usize,
@@ -21,21 +21,22 @@ enum Command {
 
 impl Unit {
     fn apply(&self, c: &Command) -> Unit {
-        match c {
+        let cells = match c {
             &Command::Move(d)   => {
                 assert!(d == Direction::YX ||  // West
                         d == Direction::XY ||  // East
                         d == Direction::ZX ||  // SW
                         d == Direction::ZY);   // SE
-                unimplemented!()
+                self.cells.iter().map(|&c| c + d).collect()
             },
             &Command::Rotate(a) => {
                 // Read as clockwise and counterclockwise.
                 assert!(a == Angle::Right || a == Angle::Left);
-                let cells = self.cells.iter()
-                    .map(|c| c.rotate_around(self.pivot, a)).collect();
-                Unit { cells: cells, ..*self }
-            }
-        }            
+                self.cells.iter()
+                    .map(|c| c.rotate_around(self.pivot, a)).collect()
+            }            
+        };
+        
+        Unit { cells: cells, ..*self }        
     }
 }
