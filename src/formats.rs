@@ -1,5 +1,4 @@
 #[derive(Debug, RustcDecodable, RustcEncodable)]
-
 #[allow(non_snake_case)]
 pub struct Board {
     pub id: u64,
@@ -11,16 +10,25 @@ pub struct Board {
     pub sourceSeeds: Vec<u64>
 }
 
-
 #[derive(Debug, RustcDecodable, RustcEncodable)]
 pub struct Unit {
     pub members: Vec<Cell>,
     pub pivot: Cell
 }
 
-
 #[derive(Debug, RustcDecodable, RustcEncodable)]
 pub struct Cell {
     pub x: usize,
     pub y: usize
 }
+
+#[derive(Debug, RustcDecodable, RustcEncodable)]
+#[allow(non_snake_case)]
+pub struct Solution {
+    problemId: u64,
+    seed: u64,
+    tag: String,
+    solution: Vec<Command>
+}
+
+type Command = char;

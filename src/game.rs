@@ -1,4 +1,4 @@
-type Pos = (usize, usize);
+use hex2d::{self, Angle, Coordinate, Position};
 
 struct Board {
     width: usize,
@@ -6,18 +6,14 @@ struct Board {
     cells: Vec<Vec<bool>>
 }
 
+#[derive(Clone)]
 struct UnitShape {
-    cells: Vec<Pos>,
-    pivot: Pos
+    cells: Vec<hex2d::Coordinate>,
+    pivot: hex2d::Coordinate
 }
 
+#[derive(Clone)]
 struct Unit {
     shape: UnitShape,
-    position: Pos,               // pivot positon
-    rotation: u8                 // 0..5
-}
-
-enum Move {
-    Translation(Pos),
-    Rotation(i8)
+    position: hex2d::Position, 
 }
