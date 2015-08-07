@@ -4,6 +4,7 @@ extern crate rustc_serialize;
 mod formats;
 mod game;
 mod scoring;
+mod strategy;
 
 use rustc_serialize::json;
 use std::io::Read;

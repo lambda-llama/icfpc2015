@@ -70,7 +70,7 @@ pub struct Unit {
     pub pivot: hex2d::Coordinate
 }
 
-enum Command {
+pub enum Command {
     Move(hex2d::Direction),
     Rotate(hex2d::Angle)
 }
