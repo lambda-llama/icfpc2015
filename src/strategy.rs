@@ -4,17 +4,12 @@ use hex2d::{Angle, Coordinate};
 
 use game::{Board, Command, Unit, ALL_COMMANDS};
 
-
-fn place(unit: &Unit, board: &Board) -> Option<Coordinate> {
-    unimplemented!()
-}
-
 fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     let mut q = VecDeque::new();
     q.push_back(source.clone());
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
     let mut seen: HashSet<Unit> = HashSet::new();
-    loop {
+    while (!q.is_empty()) {
         let tip = q.pop_front().unwrap();        
         if tip == *target {
             break;
@@ -29,7 +24,7 @@ fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
         }
 
         seen.insert(tip);
-    };
+    }
 
     let mut path = Vec::new();
     let mut tip = target;
