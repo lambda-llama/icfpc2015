@@ -1,4 +1,6 @@
 #[derive(Debug, RustcDecodable, RustcEncodable)]
+
+#[allow(non_snake_case)]
 pub struct Board {
     pub id: u64,
     pub units: Vec<Unit>,
