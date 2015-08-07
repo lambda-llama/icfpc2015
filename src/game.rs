@@ -19,8 +19,12 @@ struct GamePosition {
 }
 
 impl GamePosition {
-    fn start(g: Game) -> GamePosition {
-        unimplemented!();
+    fn start(mut g: Game) -> GamePosition {
+        let unit = g.source.remove(0);
+        GamePosition {
+            game: g,
+            unit: unit
+        }
     }
 
     fn step(&self, c: Command) -> GamePosition {
@@ -41,22 +45,23 @@ enum Command {
 
 impl Unit {
     fn apply(&self, c: &Command) -> Unit {
-        let cells = match c {
+        match c {
             &Command::Move(d)   => {
                 assert!(d == Direction::YX ||  // West
                         d == Direction::XY ||  // East
                         d == Direction::ZX ||  // SW
                         d == Direction::ZY);   // SE
-                self.cells.iter().map(|&c| c + d).collect()
+                let cells = self.cells.iter().map(|&c| c + d).collect();
+                let pivot = self.pivot + d;
+                Unit { cells: cells, pivot: pivot }
             },
             &Command::Rotate(a) => {
                 // Read as clockwise and counterclockwise.
                 assert!(a == Angle::Right || a == Angle::Left);
-                self.cells.iter()
-                    .map(|c| c.rotate_around(self.pivot, a)).collect()
+                let cells = self.cells.iter()
+                    .map(|c| c.rotate_around(self.pivot, a)).collect();
+                Unit { cells: cells, ..*self }
             }
-        };
-
-        Unit { cells: cells, ..*self }
+        }
     }
 }
