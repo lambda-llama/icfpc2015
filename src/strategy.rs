@@ -5,7 +5,8 @@ use hex2d::{Coordinate};
 use game::{Command, Unit, ALL_COMMANDS};
 use board::Board;
 
-fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
+/// Find a sequence of commands which transform `source` to `target`.
+pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     let mut q = VecDeque::new();
     q.push_back(source.clone());
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
@@ -38,7 +39,7 @@ fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     path
 }
 
-fn best_position(unit: &Unit, board: &Board) -> Option<Unit> {
+pub fn best_position(unit: &Unit, board: &Board) -> Option<Unit> {
     for y in 0..board.height {
         for x in 0..board.width {
             let moved_unit = unit.move_to(Coordinate  {x: x as i32, y: y as i32});

@@ -1,4 +1,4 @@
-use hex2d::{self, Angle, Coordinate, Direction};
+use hex2d::{Angle, Coordinate, Direction};
 use board::Board;
 
 
@@ -75,10 +75,10 @@ impl<'a> GamePosition<'a> {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum Command {
-    Move(hex2d::Direction),
-    Rotate(hex2d::Angle)
+    Move(Direction),
+    Rotate(Angle)
 }
 
 pub static ALL_COMMANDS : [Command; 6] = [
@@ -92,8 +92,8 @@ pub static ALL_COMMANDS : [Command; 6] = [
 
 #[derive(Clone, PartialEq, Eq, Hash)]
 pub struct Unit {
-    pub cells: Vec<hex2d::Coordinate>,
-    pub pivot: hex2d::Coordinate
+    pub cells: Vec<Coordinate>,
+    pub pivot: Coordinate
 }
 
 impl Unit {
@@ -118,7 +118,7 @@ impl Unit {
         }
     }
 
-    pub fn move_to(&self, new_pivot: hex2d::Coordinate) -> Unit {
+    pub fn move_to(&self, new_pivot: Coordinate) -> Unit {
         Unit {
             cells: self.cells.clone(),
             pivot: new_pivot
