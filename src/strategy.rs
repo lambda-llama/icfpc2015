@@ -16,6 +16,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
             break;
         }
 
+        seen.insert(tip.clone());
         for cj in ALL_COMMANDS.iter() {
             let next = tip.apply(cj);
             if !seen.contains(&next) && board.check_unit_position(&next) {
@@ -23,8 +24,6 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
                 parents.insert(next, (*cj, tip.clone()));
             }
         }
-
-        seen.insert(tip);
     }
 
     let mut path = Vec::new();
@@ -41,7 +40,9 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
 pub fn best_position(unit: &Unit, board: &Board) -> Option<Unit> {
     for y in (0..board.height).rev() {
         for x in 0..board.width {
-            let moved = unit.move_to(Coordinate  {x: x as i32, y: y as i32});
+            let c = Coordinate  {x: x as i32,
+                                 y: (board.height - 1 - y) as i32};
+            let moved = unit.move_to(c);
             if board.check_unit_position(&moved) {
                 return Some(moved)
             }

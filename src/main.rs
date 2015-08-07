@@ -22,9 +22,13 @@ fn fetch_game(i: u64) -> formats::Board {
 
 fn main() {
     let game = fetch_game(0).games().into_iter().next().unwrap();
-    let mut moves: Vec<game::Command> = Vec::new();
-    moves.push(game::Command::Move(Direction::ZX));
-    for _ in game.play(&moves) {
-        println!("{}", "here");
-    }
+    // let mut moves: Vec<game::Command> = Vec::new();
+    // moves.push(game::Command::Move(Direction::ZX));
+    // for _ in game.play(&moves) {
+    //     println!("{}", "here");
+    // }
+    let p = strategy::best_position(&game.source[0], &game.board).unwrap();
+    println!("source = {:?}", game.source[0]);
+    println!("target = {:?}", p);
+    println!("{:?}", strategy::route(&game.source[0], &p, &game.board));
 }
