@@ -29,14 +29,7 @@ impl Board {
     /// Returns `true` if a `unit` is within board boundaries and does
     /// not overlap any of the occupied cells.
     pub fn check_unit_position(&self, unit: &Unit) -> bool {
-        for cell in &unit.cells {
-            if cell.x < 0 || cell.x >= self.width as i32  ||                
-               cell.y < 0 || cell.y >= self.height as i32 ||
-               self.cells[cell.x as usize][cell.y as usize] {
-                return false
-            }
-        }
-        true
+        unit.cells.iter().all(|c| self.is_valid(c.x, c.y) && !self.at(c.x, c.y))
     }
 
     pub fn get_correct_commands(&self, unit: &Unit) -> Vec<&Command> {
@@ -46,8 +39,7 @@ impl Board {
     }
 
     pub fn at(&self, x: i32, y: i32) -> bool {
-        assert!(0 <= x && x <= self.width as i32);
-        assert!(0 <= y && y <= self.height as i32);
+        assert!(self.is_valid(x, y));
         self.cells[y as usize][x as usize]
     }
 
@@ -61,6 +53,11 @@ impl Board {
             cells: Rc::new(cells),
             ..*self
         }
+    }
+
+    fn is_valid(&self, x: i32, y: i32) -> bool {
+        (0 <= x && x <= self.width as i32) &&
+        (0 <= y && y <= self.height as i32)
     }
 
 }
