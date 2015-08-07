@@ -12,9 +12,11 @@ pub struct Game {
     pub source: Vec<Unit>
 }
 
-struct GamePosition {
-    game: Game,
-    unit: Unit
+struct GamePosition<'a> {
+    game: &'a Game,
+    board: Board,
+    unit: Unit,
+    next_source: usize
 }
 
 impl Board {
@@ -39,12 +41,28 @@ impl Board {
     }
 }
 
-impl GamePosition {
-    fn start(mut g: Game) -> GamePosition {
-        let unit = g.source.remove(0);
+impl<'a> GamePosition<'a> {
+    fn start(g: &Game) -> GamePosition {
         GamePosition {
             game: g,
-            unit: unit
+            board : g.board.clone(),
+            unit: g.source[0].clone(),
+            next_source: 1
+        }
+    }
+
+    fn next_unit(&self) -> Option<GamePosition> {
+        let board = self.game.board.place_unit(&self.unit);
+        if (self.next_source + 1 < self.game.source.len()) {
+            Some(GamePosition {
+                board: board,
+                unit: self.game.source[self.next_source].clone(),
+                next_source: self.next_source + 1,
+                ..*self
+            })
+        }
+        else {
+            None
         }
     }
 
@@ -52,10 +70,14 @@ impl GamePosition {
         let unit = self.unit.apply(c);
         if self.game.board.check_unit_position(&unit) {
             if self.game.board.get_correct_commands(&unit).len() == 0 {
-                unimplemented!();
+                self.next_unit()
             }
             else {
-                unimplemented!();
+                Some(GamePosition {
+                    unit: unit,
+                    board: self.board.clone(),
+                    ..*self
+                })
             }
         }
         else {
