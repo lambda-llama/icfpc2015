@@ -1,4 +1,6 @@
+extern crate hex2d;
 extern crate rustc_serialize;
+
 mod board;
 mod game;
 
