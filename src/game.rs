@@ -128,7 +128,7 @@ impl Unit {
         }
     }
 
-    fn move_to(&self, new_pivot: hex2d::Coordinate) -> Unit {
+    pub fn move_to(&self, new_pivot: hex2d::Coordinate) -> Unit {
         Unit {
             cells: self.cells.clone(),
             pivot: new_pivot
