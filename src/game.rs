@@ -1,6 +1,6 @@
 use hex2d::{self, Angle, Coordinate, Direction};
 
-#[derive(RustcEncodable)]
+#[derive(RustcEncodable, Clone)]
 pub struct Board {
     pub width: usize,
     pub height: usize,
@@ -27,7 +27,15 @@ impl Board {
     }
 
     fn place_unit(&self, unit: &Unit) -> Board {
-        unimplemented!()
+        let mut clone = self.clone();
+        for cell in unit.cells.iter() {
+            let x = cell.x as usize;
+            let y = cell.y as usize;
+            assert!(!clone.cells[x][y]);
+            clone.cells[x][y] = true
+        }
+
+        clone
     }
 }
 
