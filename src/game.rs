@@ -78,8 +78,8 @@ pub enum Command {
 pub static ALL_COMMANDS : [Command; 6] = [
     Command::Move(Direction::YX),
     Command::Move(Direction::XY),
-    Command::Move(Direction::ZX),
-    Command::Move(Direction::ZY),
+    Command::Move(Direction::XZ),
+    Command::Move(Direction::YZ),
     Command::Rotate(Angle::Left),
     Command::Rotate(Angle::Right)
 ];
@@ -107,8 +107,8 @@ impl Unit {
             &Command::Move(d)   => {
                 assert!(d == Direction::YX ||  // West
                         d == Direction::XY ||  // East
-                        d == Direction::ZX ||  // SW
-                        d == Direction::ZY);   // SE
+                        d == Direction::XZ ||  // SW
+                        d == Direction::YZ);   // SE
                 let cells = self.cells.iter().map(|&c| c + d).collect();
                 let pivot = self.pivot + d;
                 Unit { cells: cells, pivot: pivot }
