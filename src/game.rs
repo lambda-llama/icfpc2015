@@ -13,6 +13,21 @@ struct Game {
     source: Vec<Unit>
 }
 
+struct GamePosition {
+    game: Game,
+    unit: Unit
+}
+
+impl GamePosition {
+    fn start(g: Game) -> GamePosition {
+        unimplemented!();
+    }
+
+    fn step(&self, c: Command) -> GamePosition {
+        unimplemented!();
+    }
+}
+
 #[derive(Clone)]
 struct Unit {
     cells: Vec<hex2d::Coordinate>,
