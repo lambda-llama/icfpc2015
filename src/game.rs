@@ -1,9 +1,9 @@
-type Pos = (usize, usize)
+type Pos = (usize, usize);
 
 struct Board {
     width: usize,
     height: usize,
-    cells: Vec<Vec<bool>>>
+    cells: Vec<Vec<bool>>
 }
 
 struct UnitShape {
@@ -12,16 +12,12 @@ struct UnitShape {
 }
 
 struct Unit {
-    shape: UnitType,
+    shape: UnitShape,
     position: Pos,               // pivot positon
     rotation: u8                 // 0..5
 }
 
 enum Move {
-    East, West, SouthEast, SouthWest;
-}
-
-enum Turn {
-    Clockwise,
-    CounterClockwise
+    Translation(Pos),
+    Rotation(i8)
 }
