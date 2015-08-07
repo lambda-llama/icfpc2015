@@ -90,7 +90,7 @@ pub static ALL_COMMANDS : [Command; 6] = [
     Command::Rotate(Angle::Right)
 ];
 
-#[derive(Clone, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Unit {
     cells: Vec<Coordinate>,
     pub pivot: Coordinate
@@ -132,7 +132,7 @@ impl Unit {
     pub fn move_to(&self, new_pivot: Coordinate) -> Unit {
         Unit {
             cells: self.cells.iter()
-                .map(|c| c - self.pivot + new_pivot).collect(),
+                .map(|&c| c - self.pivot + new_pivot).collect(),
             pivot: new_pivot
         }
     }
