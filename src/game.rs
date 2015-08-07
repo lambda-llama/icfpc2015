@@ -34,6 +34,22 @@ pub struct Game {
     pub source: Vec<Unit>
 }
 
+impl Game {
+    fn play<'a>(&'a self, moves: &Vec<Command>) -> Vec<GamePosition<'a>> {
+        let mut result: Vec<GamePosition<'a>>  = Vec::new();
+        let start = GamePosition::start(self);
+        result.push(start);
+        for m in moves {
+            if let Some(next) = result.last().unwrap().step(m)  {
+                result.push(next);
+            } else {
+                break;
+            }
+        }
+        result
+    }
+}
+
 struct GamePosition<'a> {
     game: &'a Game,
     board: Board,
@@ -51,7 +67,7 @@ impl<'a> GamePosition<'a> {
         }
     }
 
-    fn next_unit(&self) -> Option<GamePosition> {
+    fn next_unit(&self) -> Option<GamePosition<'a>> {
         let board = self.game.board.place_unit(&self.unit);
         if (self.next_source + 1 < self.game.source.len()) {
             Some(GamePosition {
@@ -66,7 +82,7 @@ impl<'a> GamePosition<'a> {
         }
     }
 
-    fn step(&self, c: &Command) -> Option<GamePosition> {
+    fn step(&self, c: &Command) -> Option<GamePosition<'a>> {
         let unit = self.unit.apply(c);
         if self.game.board.check_unit_position(&unit) {
             if self.game.board.get_correct_commands(&unit).len() == 0 {
