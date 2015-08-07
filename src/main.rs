@@ -1,3 +1,12 @@
+extern crate rustc_serialize;
+mod board;
+
+use rustc_serialize::json;
+
+use board::Board;
+
 fn main() {
-    println!("Hello, icfpc2015!");
+    let b = Board {id: 92};
+    let encoded = json::encode(&b).unwrap();
+    println!("{}", encoded);
 }
