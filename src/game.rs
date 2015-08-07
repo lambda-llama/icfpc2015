@@ -7,18 +7,6 @@ pub struct Board {
     pub cells: Vec<Vec<bool>>
 }
 
-pub struct Game {
-    pub board: Board,
-    pub source: Vec<Unit>
-}
-
-struct GamePosition<'a> {
-    game: &'a Game,
-    board: Board,
-    unit: Unit,
-    next_source: usize
-}
-
 impl Board {
     pub fn check_unit_position(&self, unit: &Unit) -> bool {
         unimplemented!()
@@ -39,6 +27,18 @@ impl Board {
 
         clone
     }
+}
+
+pub struct Game {
+    pub board: Board,
+    pub source: Vec<Unit>
+}
+
+struct GamePosition<'a> {
+    game: &'a Game,
+    board: Board,
+    unit: Unit,
+    next_source: usize
 }
 
 impl<'a> GamePosition<'a> {
@@ -86,12 +86,6 @@ impl<'a> GamePosition<'a> {
     }
 }
 
-#[derive(Clone)]
-pub struct Unit {
-    pub cells: Vec<hex2d::Coordinate>,
-    pub pivot: hex2d::Coordinate
-}
-
 pub enum Command {
     Move(hex2d::Direction),
     Rotate(hex2d::Angle)
@@ -105,6 +99,12 @@ static ALL_COMMANDS : [Command; 6] = [
     Command::Rotate(Angle::Left),
     Command::Rotate(Angle::Right)
 ];
+
+#[derive(Clone)]
+pub struct Unit {
+    pub cells: Vec<hex2d::Coordinate>,
+    pub pivot: hex2d::Coordinate
+}
 
 impl Unit {
     fn apply(&self, c: &Command) -> Unit {
