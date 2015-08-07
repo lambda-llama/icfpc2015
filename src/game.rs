@@ -10,7 +10,9 @@ pub struct Board {
 impl Board {
     pub fn check_unit_position(&self, unit: &Unit) -> bool {
         for cell in &unit.cells {
-            if (self.cells[cell.x as usize][cell.y as usize]) {
+            if (self.cells[cell.x as usize][cell.y as usize] ||
+                cell.x < 0 || cell.x >= self.width as i32    ||
+                cell.y < 0 || cell.y >= self.height as i32) {
                 return false
             }
         }
