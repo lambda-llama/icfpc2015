@@ -1,6 +1,5 @@
 extern crate hex2d;
 extern crate rustc_serialize;
-extern crate svg; 
 
 mod formats;
 mod game;
@@ -10,11 +9,14 @@ use rustc_serialize::json;
 use std::io::Read;
 use std::fs;
 
-use formats::Board;
+fn fetch_problem(i: u64) -> formats::Board {
+    let path = format!("./problems/problem_{}.json", i);
+    println!("{}", path);
+    let mut data = String::new();
+    fs::File::open(path).unwrap().read_to_string(&mut data).unwrap();
+    json::decode(&data).unwrap()
+}
 
 fn main() {
-    let mut problem = String::new();
-    fs::File::open("./../problems/problem_0.json").unwrap().read_to_string(&mut problem).unwrap();
-    let board: Board = json::decode(&problem).unwrap();    
-    println!("{:?}", board);
+    println!("{:?}", fetch_problem(0));
 }
