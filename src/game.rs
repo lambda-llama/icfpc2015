@@ -39,8 +39,4 @@ impl Unit {
         
         Unit { cells: cells, ..*self }        
     }
-
-    fn apply_sequence(&self, cs: &Vec<Command>) -> Unit {
-
-    }
 }
