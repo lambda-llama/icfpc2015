@@ -9,13 +9,27 @@ struct Board {
 }
 
 struct Game {
-    inial_board: Board,
+    board: Board,
     source: Vec<Unit>
 }
 
 struct GamePosition {
     game: Game,
     unit: Unit
+}
+
+impl Board {
+    fn check_unit_position(&self, unit: &Unit) -> bool {
+        unimplemented!()
+    }
+
+    fn get_correct_commands(&self, unit: &Unit) -> Vec<Command> {
+        unimplemented!()
+    }
+
+    fn place_unit(&self, unit: &Unit) -> Board {
+        unimplemented!()
+    }
 }
 
 impl GamePosition {
@@ -27,8 +41,19 @@ impl GamePosition {
         }
     }
 
-    fn step(&self, c: Command) -> GamePosition {
-        unimplemented!();
+    fn step(&self, c: Command) -> Option<GamePosition> {
+        let unit = self.unit.apply(c);
+        if self.game.board.check_unit_position(unit) {
+            if self.game.get_correct_commands(unit).len() == 0 {
+
+            }
+            else {
+
+            }
+        }
+        else {
+            None
+        }
     }
 }
 
