@@ -22,16 +22,9 @@ impl Board {
     }
 
     pub fn game_for_seed(&self, seed: u64) -> game::Game {
-        let mut cells = vec![vec![false; self.width]; self.height];
-        for c in self.filled.iter() {
-            cells[c.y as usize][c.x as usize] = true;
-        }
+        let board = board::Board::new(self.width, self.height,
+                                      self.filled.iter().map(|c| (c.x, c.y)));
 
-        let board = board::Board {
-            width: self.width,
-            height: self.height,
-            cells: cells
-        };
 
         let units: Vec<game::Unit> = self.units.iter().map(|u| {
             game::Unit {
