@@ -204,6 +204,17 @@ impl Unit {
         }
     }
 
+    pub fn move_corner_to<C>(&self, to: C) -> Unit where C: ToCoordinate + Copy {
+        let cell = self.cells.first().unwrap().clone();
+        let diff = to.to_coordinate() - cell;
+        Unit {
+            cells: self.cells.iter()
+                .map(|&c| c + diff).collect(),
+            pivot: self.pivot + diff
+        }
+    }
+
+
     pub fn move_to<C>(&self, new_pivot: C) -> Unit
         where C: ToCoordinate + Copy
     {
