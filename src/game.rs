@@ -1,5 +1,5 @@
 use hex2d::{Angle, Coordinate, Direction, ToCoordinate};
-use board::Board;
+use board::{Board, cube_to_offset};
 
 pub struct Game {
     pub board: Board,
@@ -41,12 +41,12 @@ pub struct GamePosition<'a> {
 
 impl<'a> GamePosition<'a> {
     pub fn to_state(&self) -> GameState {
-        let pivot = (self.unit.pivot.x, self.unit.pivot.y);
-        let cells: Vec<(i32, i32)> = self.unit.iter().collect();
+        let cells: Vec<(i32, i32)> = self.unit.iter()
+            .map(|c| cube_to_offset(&c)).collect();
         GameState {
             board: self.board.clone(),
             unit: UnitState {
-                pivot: pivot,
+                pivot: cube_to_offset(&self.unit.pivot),
                 cells: cells
             }
         }
