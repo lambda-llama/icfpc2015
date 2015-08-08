@@ -1,6 +1,6 @@
 use std::collections::{VecDeque, HashSet, HashMap};
 
-use hex2d::{Coordinate};
+use hex2d::Coordinate;
 
 use game::{Command, Unit, ALL_COMMANDS};
 use board::Board;
@@ -12,6 +12,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
     let mut seen: HashSet<Unit> = HashSet::new();
     while let Some(tip) = q.pop_front() {
+        assert!(board.check_unit_position(&tip));
         if tip == *target {
             break;
         }
