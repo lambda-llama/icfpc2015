@@ -43,6 +43,10 @@ impl Board {
         !self.cells[y as usize][x as usize]
     }
 
+    pub fn place_new_unit(&self, unit: &Unit) -> Unit {
+        unimplemented!()
+    }
+
     pub fn lock_unit(&self, unit: &Unit) -> Board {
         let mut cells = (*self.cells).clone();
         for (x, y) in unit.iter() {
