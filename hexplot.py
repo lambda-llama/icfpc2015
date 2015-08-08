@@ -35,9 +35,7 @@ def main(path, edge=16):
         for row in range(board["height"]):
             for col in range(board["width"]):
                 hexagon = hexagon_generator(row, col)
-                if unit["pivot"] == [col, row]:
-                    color = "yellow"
-                elif any(x == col and y == row for x, y in unit["cells"]):
+                if any(x == col and y == row for x, y in unit["cells"]):
                     color = "blue"
                 elif cells[row][col]:
                     color = "red"
@@ -49,6 +47,9 @@ def main(path, edge=16):
                 mx = sum(coords[::2]) * 2 / len(coords) - edge / 2
                 my = sum(coords[1::2]) * 2 / len(coords) - edge / 4
                 draw.text((mx, my), str((row, col)), fill="black", font=font)
+                if unit["pivot"] == [col, row]:
+                    draw.ellipse((mx - edge / 2, my - edge / 2, mx, my),
+                                 fill="pink")
         image.save("/tmp/step_{:08d}.png".format(i))
 
 
