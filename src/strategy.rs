@@ -100,8 +100,12 @@ pub fn play(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
             if let Some(new_commands) = route(&cur_game_pos.unit, &target,
                                               &cur_game_pos.board) {
                 for &cmd in new_commands.iter() {
-                    cur_game_pos = cur_game_pos.step(cmd);
-                    positions.push(cur_game_pos.clone())
+                    if let Some(new_pos) =  cur_game_pos.step(cmd) {
+                        cur_game_pos = new_pos;
+                        positions.push(cur_game_pos.clone())
+                    } else {
+                        assert!(false);
+                    }
                 }
                 commands.extend(new_commands);
                 moved = true;
