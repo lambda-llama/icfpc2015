@@ -38,13 +38,13 @@ fn main() {
     let board: formats::Board = json::decode(&data).unwrap();
     if matches.opt_present("d") {
         let game = board.games().into_iter().next().unwrap();
-        let (_, positions) = strategy::process_game(&game);
+        let (_, positions) = strategy::play(&game);
         let positions: Vec<_> = positions.iter().map(|c| c.to_state()).collect();
         println!("{}", json::encode(&positions).unwrap());
     } else {
         let mut solutions = Vec::new();
         for game in board.games() {
-            let (commands, positions) = strategy::process_game(&game);
+            let (commands, positions) = strategy::play(&game);
             for (i, p) in positions.iter().enumerate() {
                 println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
             }

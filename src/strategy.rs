@@ -76,7 +76,7 @@ pub fn scoring_function(board: &Board) -> i64 {
         (board.n_holes() as i64) * hole_penalty;
 }
 
-pub fn process_game(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
+pub fn play(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
     let mut cur_game_pos = GamePosition::start(g);
     let mut commands: Vec<Command> = Vec::new();
     let mut positions: Vec<GamePosition> = vec![cur_game_pos.clone()];

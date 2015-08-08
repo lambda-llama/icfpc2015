@@ -8,19 +8,6 @@ pub struct Game {
     pub seed: u64
 }
 
-impl Game {
-    pub fn play<'a>(&'a self, moves: &Vec<Command>) -> Vec<GamePosition<'a>> {
-        let mut result: Vec<GamePosition<'a>>  = Vec::new();
-        let start = GamePosition::start(self);
-        result.push(start);
-        for &m in moves {
-            let next = result.last().unwrap().step(m);
-            result.push(next);
-        }
-        result
-    }
-}
-
 #[derive(RustcEncodable)]
 struct UnitState {
     pivot: (i32, i32),
