@@ -63,6 +63,10 @@ pub fn process_game(g: &Game) -> Vec<GamePosition> {
         let best_pos = best_position(&cur_game_pos.unit, &cur_game_pos.board);
         match best_pos {
             Some(target) => {
+                if !cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
+                    break;
+                }
+                assert!(cur_game_pos.board.check_unit_position(&target));
                 let new_commands = route(&cur_game_pos.unit, &target, &cur_game_pos.board);
                 for cmd in new_commands.iter() {
                     cur_game_pos = cur_game_pos.step(&cmd);
