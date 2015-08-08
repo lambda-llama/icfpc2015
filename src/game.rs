@@ -92,6 +92,38 @@ pub enum Command {
     Rotate(Angle)
 }
 
+impl ToString for Command {
+    fn to_string(&self) -> String {
+        match self {
+            &Command::Move(dir) => {
+                let dir_str = match dir {
+                    Direction::YX => "West".to_string(),
+                    Direction::XY => "East".to_string(),
+                    Direction::XZ => "SW".to_string(),
+                    Direction::YZ => "SE".to_string(),
+                    _             => "UP".to_string()
+                };
+                format!("Move: {}", dir_str)
+            }
+            &Command::Rotate(ang) => {
+                let ang_str = match ang {
+                    Angle::Left  => "Left".to_string(),
+                    Angle::Right => "Right".to_string(),
+                    _            => "Unexpected".to_string()
+                };
+                format!("Rotate: {}", ang_str)
+            }
+        }
+    }
+}
+
+#[test]
+fn to_string_test() {
+    let s = ALL_COMMANDS[0].to_string();
+    println!("{}", s);
+}
+
+
 pub static ALL_COMMANDS : [Command; 6] = [
     Command::Move(Direction::YX),
     Command::Move(Direction::XY),
