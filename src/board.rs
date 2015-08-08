@@ -53,7 +53,7 @@ impl Board {
         line.iter().all(|&c| c)
     }
 
-    pub fn clear_filled_lines(&self, cells: &Vec<Vec<bool>>) -> Board {
+    pub fn clear_filled_lines(&self, cells: &Vec<Vec<bool>>) -> (Board, i32) {
         let mut new_cells : Vec<Vec<bool>> = Vec::new();
 
         for line in cells.iter() {
@@ -61,14 +61,16 @@ impl Board {
                 new_cells.push(line.clone())
             }
         }
+        let lines_cleared = self.height - new_cells.len();
         for y in new_cells.len()..self.height {
             new_cells.push(vec![false; self.width])
         }
 
-        Board {
+        let board = Board {
             cells: Rc::new(new_cells),
             ..*self
-        }
+        };
+        (board, lines_cleared as i32)
     }
 
     pub fn is_free(&self, x: i32, y: i32) -> bool {
@@ -84,7 +86,7 @@ impl Board {
         unit.clone()
     }
 
-    pub fn lock_unit(&self, unit: &Unit) -> Board {
+    pub fn lock_unit(&self, unit: &Unit) -> (Board, i32) {
         let mut cells = (*self.cells).clone();
         for (x, y) in unit.iter() {
             assert!(self.is_free(x, y));
