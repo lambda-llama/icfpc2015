@@ -87,6 +87,7 @@ pub fn play(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
     let mut positions: Vec<GamePosition> = vec![cur_game_pos.clone()];
     while cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
         let best_positions = best_position(&cur_game_pos.unit, &cur_game_pos.board);
+        let mut moved = false;
         for target in best_positions {
             if let Some(new_commands) = route(&cur_game_pos.unit, &target,
                                               &cur_game_pos.board) {
@@ -95,9 +96,11 @@ pub fn play(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
                     positions.push(cur_game_pos.clone())
                 }
                 commands.extend(new_commands);
+                moved = true;
                 break;
             }
         }
+        assert!(moved);
     }
 
     return (commands, positions)
