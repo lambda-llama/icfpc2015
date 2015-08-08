@@ -7,7 +7,6 @@ mod game;
 // mod scoring;
 mod strategy;
 
-use hex2d::{Direction};
 use rustc_serialize::json;
 use std::io::Read;
 use std::fs;
