@@ -33,7 +33,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
         path.push(c);
         tip = next;
     }
-
+    path.reverse();
     path
 }
 
