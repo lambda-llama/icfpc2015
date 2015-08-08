@@ -25,7 +25,7 @@ impl Game {
 
 struct GamePosition<'a> {
     game: &'a Game,
-    board: Board,
+    pub board: Board,
     unit: Unit,
     next_source: usize
 }
@@ -55,6 +55,7 @@ impl<'a> GamePosition<'a> {
 
     fn step(&self, c: &Command) -> Option<GamePosition<'a>> {
         let unit = self.unit.apply(c);
+        println!("from: {:?}\nto:   {:?}", self.unit, unit);
         if self.game.board.check_unit_position(&unit) {
             if self.game.board.get_correct_commands(&unit).len() == 0 {
                 return self.next_unit();
