@@ -66,10 +66,11 @@ impl<'a> GamePosition<'a> {
 
     fn next_unit(&self) -> Option<GamePosition<'a>> {
         let board = self.game.board.lock_unit(&self.unit);
+        let unit = self.game.board.place_new_unit(&self.game.source[self.next_source]);
         if self.next_source + 1 < self.game.source.len() {
             return Some(GamePosition {
                 board: board,
-                unit: self.game.source[self.next_source].clone(),
+                unit: unit,
                 next_source: self.next_source + 1,
                 ..*self
             });
