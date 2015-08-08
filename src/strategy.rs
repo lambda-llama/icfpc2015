@@ -93,7 +93,7 @@ pub fn play(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
     let mut cur_game_pos = GamePosition::start(g);
     let mut commands: Vec<Command> = Vec::new();
     let mut positions: Vec<GamePosition> = vec![cur_game_pos.clone()];
-    while cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
+    'outer: while cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
         let best_positions = best_position(&cur_game_pos.unit, &cur_game_pos.board);
         let mut moved = false;
         for target in best_positions {
@@ -104,7 +104,7 @@ pub fn play(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
                         cur_game_pos = new_pos;
                         positions.push(cur_game_pos.clone())
                     } else {
-                        assert!(false);
+                        break 'outer;
                     }
                 }
                 commands.extend(new_commands);

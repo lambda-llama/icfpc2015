@@ -61,6 +61,10 @@ impl<'a> GamePosition<'a> {
     }
 
     pub fn lock_current_unit(&self, c: Command) -> Option<GamePosition<'a>> {
+        if !(self.next_source < self.game.source.len()) {
+            return None
+        }
+
         let (board, cleared_lines) = self.board.lock_unit(&self.unit);
         let unit = self.board.place_new_unit(&self.game.source[self.next_source]);
         let sum_unit_size = self.sum_unit_size + self.unit.size();
