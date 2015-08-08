@@ -116,16 +116,16 @@ impl ToString for Command {
                 let dir_str = match dir {
                     Direction::YX => "West".to_string(),
                     Direction::XY => "East".to_string(),
-                    Direction::ZY => "SW".to_string(),
-                    Direction::ZX => "SE".to_string(),
+                    Direction::ZY => "SE".to_string(),
+                    Direction::ZX => "SW".to_string(),
                     _             => "UP".to_string()
                 };
                 format!("Move: {}", dir_str)
             }
             &Command::Rotate(ang) => {
                 let ang_str = match ang {
-                    Angle::Left  => "Left".to_string(),
-                    Angle::Right => "Right".to_string(),
+                    Angle::Left  => "CCW".to_string(),
+                    Angle::Right => "CW".to_string(),
                     _            => "Unexpected".to_string()
                 };
                 format!("Rotate: {}", ang_str)
@@ -196,8 +196,8 @@ impl Unit {
             &Command::Move(d)   => {
                 assert!(d == Direction::YX ||  // West
                         d == Direction::XY ||  // East
-                        d == Direction::ZY ||  // SW
-                        d == Direction::ZX);   // SE
+                        d == Direction::ZY ||  // SE
+                        d == Direction::ZX);   // SW
                 let cells = self.cells.iter().map(|&c| c + d).collect();
                 let pivot = self.pivot + d;
                 Unit { cells: cells, pivot: pivot }

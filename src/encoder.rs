@@ -9,20 +9,20 @@ static XY_SYMBOLS: [char; 6] = [
     'b', 'c', 'e', 'f', 'y', '2'
 ];
 
-static ZX_SYMBOLS: [char; 6] = [
+static ZX_SYMBOLS: [char; 6] = [  // SW.
     'a', 'g', 'h', 'i', 'j', '4'
 ];
 
-static ZY_SYMBOLS: [char; 6] = [
+static ZY_SYMBOLS: [char; 6] = [  // SE.
     'l', 'm', 'n', 'o', ' ', '5'
 ];
 
 static L_SYMBOLS: [char; 6] = [
-    'd', 'q', 'r', 'v', 'z', '1'
+    'k', 's', 't', 'u', 'w', 'x'
 ];
 
 static R_SYMBOLS: [char; 6] = [
-    'k', 's', 't', 'u', 'w', 'x'
+    'd', 'q', 'r', 'v', 'z', '1'
 ];
 
 fn get_symbols(c: Command) -> [char; 6] {

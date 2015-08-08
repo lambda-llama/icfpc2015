@@ -49,7 +49,7 @@ fn main() {
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
-                tag: "<unknown>".to_string(),
+                tag: "CW/CCW".to_string(),
                 solution: encoder::encode(commands)
             });
         }
