@@ -49,7 +49,7 @@ impl Board {
 
     pub fn place_new_unit(&self, unit: &Unit) -> Unit {
         let target_y = unit.pivot.y - unit.border_top();
-        let target_x = unit.pivot.x - (unit.border_left() + (self.width as i32 - unit.width()) / 2);
+        let target_x = unit.pivot.x  - unit.border_left() + (self.width as i32 - unit.width()) / 2;
         unit.move_to((target_x, target_y))
     }
 

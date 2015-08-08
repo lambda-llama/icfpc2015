@@ -59,7 +59,7 @@ impl<'a> GamePosition<'a> {
         GamePosition {
             game: g,
             board: g.board.clone(),
-            unit: g.source[0].clone(),
+            unit: g.board.place_new_unit(&g.source[0]),
             next_source: 1
         }
     }
@@ -68,6 +68,7 @@ impl<'a> GamePosition<'a> {
         let board = self.game.board.lock_unit(&self.unit);
         let unit = self.game.board.place_new_unit(&self.game.source[self.next_source]);
         if self.next_source + 1 < self.game.source.len() {
+            let unit = board.place_new_unit(&self.game.source[self.next_source]);
             return Some(GamePosition {
                 board: board,
                 unit: unit,
