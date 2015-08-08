@@ -44,8 +44,16 @@ pub fn route(source: &Unit, target: &Unit,
         tip = next;
     }
     path.reverse();
-    path.push(Command::Move(Direction::ZY));  // lock.
-    Some(path)
+
+    for c in ALL_COMMANDS.iter() {
+        let locked = target.apply(c);
+        if !board.check_unit_position(&locked) {
+            path.push(*c);
+            return Some(path)
+        }
+    }
+
+    panic!("sai wat?");
 }
 
 pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
