@@ -22,7 +22,8 @@ class HexagonGenerator(object):
 
 
 def main(path, edge=16):
-    board = json.load(open(path))
+    data = json.load(open(path))
+    board, unit = data["board"], data["unit"]
     hexagon_generator = HexagonGenerator(edge, board["width"], board["height"])
     cells = board["cells"]
     image = Image.new('RGB', (board["width"] * edge * 2,
@@ -32,8 +33,14 @@ def main(path, edge=16):
     for row in range(board["height"]):
         for col in range(board["width"]):
             hexagon = hexagon_generator(row, col)
-            draw.polygon(list(hexagon), outline='black',
-                         fill='red' if cells[row][col] else 'white')
+            if cells[row][col]:
+                color = "red"
+            elif any(x == col and y == row for x, y in unit["cells"]):
+                color = "blue"
+            else:
+                color = "white"
+
+            draw.polygon(list(hexagon), outline='black', fill=color)
     image.show()
 
 
