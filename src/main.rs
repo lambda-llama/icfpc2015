@@ -9,7 +9,6 @@ mod board;
 mod game;
 mod scoring;
 mod strategy;
-mod encoder;
 
 use getopts::Options;
 use std::io::Read;
