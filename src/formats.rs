@@ -38,7 +38,8 @@ impl Board {
 
         game::Game {
             board: board,
-            source: source
+            source: source,
+            seed: seed
         }
     }
 
@@ -60,10 +61,10 @@ pub struct Cell {
 #[derive(Debug, RustcDecodable, RustcEncodable)]
 #[allow(non_snake_case)]
 pub struct Solution {
-    problemId: u64,
-    seed: u64,
-    tag: String,
-    solution: String,
+    pub problemId: u64,
+    pub seed: u64,
+    pub tag: String,
+    pub solution: String,
 }
 
 impl From<Cell> for hex2d::Coordinate {

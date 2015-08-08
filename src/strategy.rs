@@ -74,7 +74,7 @@ pub fn scoring_function(board: &Board) -> i64 {
     return (board.n_full_rows() * row_cost + board.n_clear_top_rows()) as i64;
 }
 
-pub fn process_game(g: &Game) -> Vec<GamePosition> {
+pub fn process_game(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
     let mut cur_game_pos = GamePosition::start(g);
     let mut commands: Vec<Command> = Vec::new();
     let mut positions: Vec<GamePosition> = vec![cur_game_pos.clone()];
@@ -100,5 +100,6 @@ pub fn process_game(g: &Game) -> Vec<GamePosition> {
         }
         assert!(moved);
     }
-    return (positions)
+
+    return (commands, positions)
 }

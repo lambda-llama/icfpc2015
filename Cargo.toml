@@ -8,3 +8,4 @@ authors = ["Aleksey Kladov <aleksey.kladov@gmail.com>"]
 rand = "0.3.0"
 rustc-serialize = "0.3"
 hex2d = "0.0.14"
+getopts = "0.2"
