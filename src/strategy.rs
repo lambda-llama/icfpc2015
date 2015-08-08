@@ -43,8 +43,8 @@ pub fn route(source: &Unit, target: &Unit,
         path.push(c);
         tip = next;
     }
-    path.push(Command::Move(Direction::ZY));  // lock.
     path.reverse();
+    path.push(Command::Move(Direction::ZY));  // lock.
     Some(path)
 }
 
@@ -67,7 +67,11 @@ pub fn process_game(g: &Game) -> Vec<GamePosition> {
     let mut commands: Vec<Command> = Vec::new();
     let mut positions: Vec<GamePosition> = vec![cur_game_pos.clone()];
     'outer: loop {
+        if !cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
+            break;
+        }
         let best_positions = best_position(&cur_game_pos.unit, &cur_game_pos.board);
+        let mut moved = false;
         for target in best_positions {
             if let Some(new_commands) = route(&cur_game_pos.unit, &target, &cur_game_pos.board) {
                 for cmd in new_commands.iter() {
@@ -78,9 +82,11 @@ pub fn process_game(g: &Game) -> Vec<GamePosition> {
                 if positions.last().unwrap().next_source == g.source.len() {
                     break 'outer;
                 }
+                moved = true;
                 break;
             }
         }
+        assert!(moved);
     }
     return (positions)
 }
