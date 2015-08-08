@@ -71,7 +71,9 @@ pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
 
 pub fn scoring_function(board: &Board) -> i64 {
     let row_cost = 100;
-    return (board.n_full_rows() * row_cost + board.n_clear_top_rows()) as i64;
+    let hole_penalty = 0;
+    return (board.n_full_rows() * row_cost + board.n_clear_top_rows()) as i64 +
+        (board.n_holes() as i64) * hole_penalty;
 }
 
 pub fn process_game(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
@@ -86,8 +88,8 @@ pub fn process_game(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
         let mut moved = false;
         for target in best_positions {
             if let Some(new_commands) = route(&cur_game_pos.unit, &target, &cur_game_pos.board) {
-                for cmd in new_commands.iter() {
-                    cur_game_pos = cur_game_pos.step(&cmd);
+                for &cmd in new_commands.iter() {
+                    cur_game_pos = cur_game_pos.step(cmd);
                     positions.push(cur_game_pos.clone())
                 }
                 commands.extend(new_commands);

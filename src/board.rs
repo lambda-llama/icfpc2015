@@ -1,6 +1,6 @@
 use std::rc::Rc;
 use hex2d::{Coordinate, ToCoordinate};
-use game::{Unit, Command, ALL_COMMANDS};
+use game::Unit ;
 
 #[derive(RustcEncodable, Clone)]
 pub struct Board {
@@ -38,6 +38,28 @@ impl Board {
             .count()
     }
 
+    pub fn n_holes(&self) -> usize {
+        return (0..self.width).flat_map(|x| {
+            (0..self.height).map(move |y| (x, y))
+        }).filter(|&(x, y)| self.is_hole(x as i32, y as i32)).count()
+    }
+
+    pub fn is_hole(&self, x: i32, y: i32) -> bool {
+        if !self.is_free(x as i32, y as i32) {
+            return false
+        }
+        let mut free_neighbours = 0;
+        let t = offset_to_cube(&(x, y));
+        for n in t.neighbors().iter() {
+            let (x, y) = cube_to_offset(n);
+            if self.is_valid(x, y) && self.is_free(x, y) {
+                free_neighbours += 1;
+            }
+        }
+
+        return free_neighbours <= 1
+    }
+
     /// Returns `true` if a `unit` is within board boundaries and does
     /// not overlap any of the occupied cells.
     pub fn check_unit_position(&self, unit: &Unit) -> bool {
@@ -54,12 +76,6 @@ impl Board {
     //     })
     // }
 
-    pub fn get_correct_commands(&self, unit: &Unit) -> Vec<&Command> {
-        ALL_COMMANDS.iter().filter(|c| {
-            self.check_unit_position(&unit.apply(c))
-        }).collect()
-    }
-
     fn check_line_filled(line: &Vec<bool>) -> bool {
         line.iter().all(|&c| c)
     }
@@ -73,7 +89,7 @@ impl Board {
             }
         }
         let lines_cleared = self.height - old_cells.len();
-        
+
         let mut new_cells = vec![vec![false; self.width]; lines_cleared];
         new_cells.extend(old_cells);
 

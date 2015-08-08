@@ -1,6 +1,8 @@
 use hex2d::{Angle, Coordinate, Direction, ToCoordinate};
 use board::{Board, cube_to_offset, offset_to_cube};
 use scoring::move_score;
+use board::{Board, cube_to_offset};
+use scoring::{move_score};
 
 pub struct Game {
     pub board: Board,
@@ -13,7 +15,7 @@ impl Game {
         let mut result: Vec<GamePosition<'a>>  = Vec::new();
         let start = GamePosition::start(self);
         result.push(start);
-        for m in moves {
+        for &m in moves {
             let next = result.last().unwrap().step(m);
             result.push(next);
         }
@@ -31,6 +33,7 @@ struct UnitState {
 struct GameState {
     pub board: Board,
     pub unit: UnitState,
+    pub previous_move: String
 }
 
 
@@ -41,7 +44,8 @@ pub struct GamePosition<'a> {
     pub unit: Unit,
     pub next_source: usize,
     pub cleared_lines_prev: i32,
-    pub score: i32
+    pub score: i32,
+    pub previous_move: Option<Command>
 }
 
 impl<'a> GamePosition<'a> {
@@ -52,7 +56,8 @@ impl<'a> GamePosition<'a> {
             unit: UnitState {
                 pivot: cube_to_offset(&self.unit.pivot),
                 cells: cells
-            }
+            },
+            previous_move: self.previous_move.map(|c| c.to_string()).unwrap_or("".to_string())
         }
     }
 
@@ -63,11 +68,12 @@ impl<'a> GamePosition<'a> {
             unit: g.board.place_new_unit(&g.source[0]),
             next_source: 1,
             cleared_lines_prev: 0,
-            score: 0
+            score: 0,
+            previous_move: None
         }
     }
 
-    pub fn lock_current_unit(&self) -> GamePosition<'a> {
+    pub fn lock_current_unit(&self, c: Command) -> GamePosition<'a> {
         let (board, cleared_lines) = self.board.lock_unit(&self.unit);
         let unit = self.board.place_new_unit(&self.game.source[self.next_source]);
         let new_score = self.score + move_score(unit.size(),
@@ -79,20 +85,22 @@ impl<'a> GamePosition<'a> {
             unit: unit,
             next_source: self.next_source + 1,
             cleared_lines_prev: cleared_lines,
-            score: new_score
+            score: new_score,
+            previous_move: Some(c)
         }
     }
 
-    pub fn step(&self, c: &Command) -> GamePosition<'a> {
-        let unit = self.unit.apply(c);
+    pub fn step(&self, c: Command) -> GamePosition<'a> {
+        let unit = self.unit.apply(&c);
         if self.board.check_unit_position(&unit) {
             GamePosition {
                 unit: unit,
                 board: self.board.clone(),
+                previous_move: Some(c),
                 ..*self
             }
         } else {
-            self.lock_current_unit()
+            self.lock_current_unit(c)
         }
     }
 }
