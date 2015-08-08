@@ -35,12 +35,12 @@ def main(path, edge=16):
         for row in range(board["height"]):
             for col in range(board["width"]):
                 hexagon = hexagon_generator(row, col)
-                if cells[row][col]:
-                    color = "red"
-                elif unit["pivot"] == [col, row]:
+                if unit["pivot"] == [col, row]:
                     color = "yellow"
                 elif any(x == col and y == row for x, y in unit["cells"]):
                     color = "blue"
+                elif cells[row][col]:
+                    color = "red"
                 else:
                     color = "white"
 
