@@ -1,4 +1,4 @@
-use hex2d::{Angle, Coordinate, Direction};
+use hex2d::{Angle, Coordinate, Direction, ToCoordinate};
 use board::Board;
 
 
@@ -135,10 +135,10 @@ impl Unit {
         self.iter().map(|(x, _y)| x).max().unwrap()
     }
 
-    pub fn width(&self) -> u32 {
+    pub fn width(&self) -> i32 {
         let result = self.border_right() - self.border_left() + 1;
         assert!(result > 0);
-        result as u32
+        result
     }
 
     pub fn iter<'a>(&'a self) -> Box<Iterator<Item=(i32, i32)> + 'a> {
@@ -166,11 +166,13 @@ impl Unit {
         }
     }
 
-    pub fn move_to(&self, new_pivot: Coordinate) -> Unit {
+    pub fn move_to<C>(&self, new_pivot: C) -> Unit
+        where C: ToCoordinate + Copy
+    {
         Unit {
             cells: self.cells.iter()
                 .map(|&c| c - self.pivot + new_pivot).collect(),
-            pivot: new_pivot
+            pivot: new_pivot.to_coordinate()
         }
     }
 }

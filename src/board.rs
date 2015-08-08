@@ -44,7 +44,9 @@ impl Board {
     }
 
     pub fn place_new_unit(&self, unit: &Unit) -> Unit {
-        unimplemented!()
+        let target_y = unit.pivot.y - unit.border_top();
+        let target_x = unit.pivot.x - (unit.border_left() + (self.width as i32 - unit.width()) / 2);
+        unit.move_to((target_x, target_y))
     }
 
     pub fn lock_unit(&self, unit: &Unit) -> Board {
