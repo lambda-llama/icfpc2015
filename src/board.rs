@@ -1,7 +1,6 @@
 use std::rc::Rc;
 use hex2d::{Coordinate, ToCoordinate};
 use game::{Unit, Command, ALL_COMMANDS};
-use rand;
 
 #[derive(RustcEncodable, Clone)]
 pub struct Board {

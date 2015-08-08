@@ -41,8 +41,7 @@ pub struct GamePosition<'a> {
 
 impl<'a> GamePosition<'a> {
     pub fn to_state(&self) -> GameState {
-        let cells: Vec<(i32, i32)> = self.unit.iter()
-            .map(|c| cube_to_offset(&c)).collect();
+        let cells: Vec<(i32, i32)> = self.unit.iter().collect();
         GameState {
             board: self.board.clone(),
             unit: UnitState {
