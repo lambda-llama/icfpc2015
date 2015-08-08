@@ -56,7 +56,7 @@ impl Board {
 
     pub fn clear_filled_lines(&self) -> Board {
         let mut cells : Vec<Vec<bool>> = Vec::new();
-  
+
         for line in self.cells.iter() {
             if !self.check_line_filled(&line) {
                 cells.push(line.clone())
@@ -65,7 +65,7 @@ impl Board {
         for y in cells.len()..self.height {
             cells.push(vec![false; self.width])
         }
-        
+
         Board {
             cells: Rc::new(cells),
             ..*self
