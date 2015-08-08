@@ -50,24 +50,24 @@ impl Board {
         }).collect()
     }
 
-    pub fn check_line_filled(&self, line: &Vec<bool>) -> bool {
+    fn check_line_filled(line: &Vec<bool>) -> bool {
         line.iter().all(|&c| c)
     }
 
-    pub fn clear_filled_lines(&self) -> Board {
-        let mut cells : Vec<Vec<bool>> = Vec::new();
+    pub fn clear_filled_lines(&self, cells: &Vec<Vec<bool>>) -> Board {
+        let mut new_cells : Vec<Vec<bool>> = Vec::new();
 
-        for line in self.cells.iter() {
-            if !self.check_line_filled(&line) {
-                cells.push(line.clone())
+        for line in cells.iter() {
+            if !Board::check_line_filled(&line) {
+                new_cells.push(line.clone())
             }
         }
-        for y in cells.len()..self.height {
-            cells.push(vec![false; self.width])
+        for y in new_cells.len()..self.height {
+            new_cells.push(vec![false; self.width])
         }
 
         Board {
-            cells: Rc::new(cells),
+            cells: Rc::new(new_cells),
             ..*self
         }
     }
@@ -90,10 +90,7 @@ impl Board {
             assert!(self.is_free(x, y));
             cells[y as usize][x as usize] = true;
         }
-        Board {
-            cells: Rc::new(cells),
-            ..*self
-        }
+        self.clear_filled_lines(&cells)
     }
 
     fn is_valid(&self, x: i32, y: i32) -> bool {
