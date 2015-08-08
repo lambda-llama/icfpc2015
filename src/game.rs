@@ -135,7 +135,7 @@ pub static ALL_COMMANDS : [Command; 6] = [
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Unit {
-    cells: Vec<Coordinate>,
+    pub cells: Vec<Coordinate>,
     pub pivot: Coordinate
 }
 
@@ -146,6 +146,11 @@ impl Unit {
             cells: cells
         }
     }
+
+    pub fn iter<'a>(&'a self) -> Box<Iterator<Item=(i32, i32)> + 'a> {
+        Box::new(self.cells.iter().map(cube_to_offset))
+    }
+
 
     pub fn border_top(&self) -> i32 {
         self.iter().map(|(_x, y)| y).min().unwrap()
@@ -163,10 +168,6 @@ impl Unit {
         let result = self.border_right() - self.border_left() + 1;
         assert!(result > 0);
         result
-    }
-
-    pub fn iter<'a>(&'a self) -> Box<Iterator<Item=(i32, i32)> + 'a> {
-        Box::new(self.cells.iter().map(|c| (c.x, c.y)))
     }
 
     pub fn apply(&self, c: &Command) -> Unit {

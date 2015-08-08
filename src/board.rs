@@ -30,8 +30,7 @@ impl Board {
     /// Returns `true` if a `unit` is within board boundaries and does
     /// not overlap any of the occupied cells.
     pub fn check_unit_position(&self, unit: &Unit) -> bool {
-        unit.iter().all(|c| {
-            let (x, y) = cube_to_offset(&c);
+        unit.iter().all(|(x, y)| {
             self.is_valid(x, y) && self.is_free(x, y)
         })
     }
@@ -87,8 +86,7 @@ impl Board {
 
     pub fn lock_unit(&self, unit: &Unit) -> Board {
         let mut cells = (*self.cells).clone();
-        for c in unit.iter() {
-            let (x, y) = cube_to_offset(&c);
+        for (x, y) in unit.iter() {
             assert!(self.is_free(x, y));
             cells[y as usize][x as usize] = true;
         }
