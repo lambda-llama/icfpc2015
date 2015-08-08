@@ -68,7 +68,7 @@ impl<'a> GamePosition<'a> {
 
     pub fn lock_current_unit(&self) -> GamePosition<'a> {
         let (board, cleared_lines) = self.game.board.lock_unit(&self.unit);
-        let unit = self.game.board.place_new_unit(&self.game.source[self.next_source]);
+        let unit = self.board.place_new_unit(&self.game.source[self.next_source]);
         let new_score = self.score + move_score(unit.size(),
                                                 cleared_lines,
                                                 self.cleared_lines_prev);
