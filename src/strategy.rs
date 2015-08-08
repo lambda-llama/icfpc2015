@@ -1,6 +1,6 @@
 use std::collections::{VecDeque, HashSet, HashMap};
 
-use hex2d::{Coordinate, Direction, Angle};
+use hex2d::{Direction, Angle};
 
 use game::{Command, Unit, ALL_COMMANDS};
 use game::{Game, GamePosition};

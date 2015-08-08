@@ -18,7 +18,6 @@ use rustc_serialize::json;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let program = args[0].clone();
 
     let mut opts = Options::new();
     opts.reqopt("f", "", "File containing JSON encoded input", "FILENAME");
