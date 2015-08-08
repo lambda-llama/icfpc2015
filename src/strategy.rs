@@ -53,9 +53,9 @@ pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
     let rots = [
         Command::Rotate(Angle::Left),
         Command::Rotate(Angle::Right)];
-    for y in (0..board.height).rev() {
-        for x in 0..board.width {
-            let c = offset_to_cube(&(x as i32, y as i32));
+    for y in (0..(board.height + 3) as i32).rev() {
+        for x in (0..(board.width + 3) as i32) {
+            let c = offset_to_cube(&(x, y));
             let mut candidates = Vec::new();
             candidates.push(unit.move_corner_to(c));
             for rot in rots.iter() {
