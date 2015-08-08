@@ -11,18 +11,20 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     q.push_back(source.clone());
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
     let mut seen: HashSet<Unit> = HashSet::new();
+    seen.insert(source.clone());
     while let Some(tip) = q.pop_front() {
         assert!(board.check_unit_position(&tip));
+        assert!(seen.contains(&tip));
         if tip == *target {
             break;
         }
 
-        seen.insert(tip.clone());
         for cj in ALL_COMMANDS.iter() {
             let next = tip.apply(cj);
             if !seen.contains(&next) && board.check_unit_position(&next) {
                 q.push_back(next.clone());
-                parents.insert(next, (*cj, tip.clone()));
+                parents.insert(next.clone(), (*cj, tip.clone()));
+                seen.insert(next);
             }
         }
     }

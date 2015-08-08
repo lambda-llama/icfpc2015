@@ -19,7 +19,7 @@ fn fetch_game(i: u64) -> formats::Board {
 }
 
 fn main() {
-    let board = fetch_game(10);
+    let board = fetch_game(0);
     let mut states = Vec::new();
     for game in board.games() {
         for unit in game.source.iter() {
