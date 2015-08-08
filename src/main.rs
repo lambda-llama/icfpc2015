@@ -4,7 +4,7 @@ extern crate rustc_serialize;
 mod formats;
 mod board;
 mod game;
-// mod scoring;
+mod scoring;
 mod strategy;
 
 use hex2d::Direction;

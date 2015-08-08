@@ -36,7 +36,9 @@ pub struct GamePosition<'a> {
     pub game: &'a Game,
     pub board: Board,
     pub unit: Unit,
-    pub next_source: usize
+    pub next_source: usize,
+    pub cleared_lines_prev: i32,
+    pub score: i32
 }
 
 impl<'a> GamePosition<'a> {
@@ -56,18 +58,25 @@ impl<'a> GamePosition<'a> {
             game: g,
             board: g.board.clone(),
             unit: g.board.place_new_unit(&g.source[0]),
-            next_source: 1
+            next_source: 1,
+            cleared_lines_prev: 0,
+            score: 0
         }
     }
 
     pub fn lock_current_unit(&self) -> GamePosition<'a> {
         let (board, cleared_lines) = self.game.board.lock_unit(&self.unit);
         let unit = self.game.board.place_new_unit(&self.game.source[self.next_source]);
+        let new_score = self.score + move_score(unit.size(),
+                                                cleared_lines,
+                                                self.cleared_lines_prev);
         GamePosition {
+            game: self.game,
             board: board,
             unit: unit,
             next_source: self.next_source + 1,
-            ..*self
+            cleared_lines_prev: cleared_lines,
+            score: new_score
         }
     }
 
@@ -80,7 +89,6 @@ impl<'a> GamePosition<'a> {
                 ..*self
             }
         } else {
-            println!("LOCKED!");
             self.lock_current_unit()
         }
     }
@@ -168,6 +176,10 @@ impl Unit {
         let result = self.border_right() - self.border_left() + 1;
         assert!(result > 0);
         result
+    }
+
+    pub fn size(&self) -> i32 {
+        self.cells.len() as i32
     }
 
     pub fn apply(&self, c: &Command) -> Unit {
