@@ -32,6 +32,14 @@ impl Board {
             .count()
     }
 
+    pub fn total_sum(&self, penalty_per_row: &Vec<i64>) -> i64 {
+        assert!(penalty_per_row.len() == self.height);
+        self.cells.iter()
+            .zip(penalty_per_row)
+            .map(|(row, penalty)| (row.iter().filter(|&&x| x).count() as i64) * penalty)
+            .fold(0, |a, b| a + b) // sum is ustable tt
+    }
+
     pub fn n_full_rows(&self) -> usize {
         self.cells.iter()
             .filter(|&l| Board::check_line_filled(&l))

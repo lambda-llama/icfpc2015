@@ -21,7 +21,7 @@ class HexagonGenerator(object):
 
 
 def main(path, edge=16):
-    font = ImageFont.truetype("Verdana.ttf", 7)
+    font = ImageFont.truetype("arial.ttf", 7)
     for i, data in enumerate(json.load(open(path))):
         board, unit = data["board"], data["unit"]
         hexagon_generator = HexagonGenerator(board["width"], board["height"])

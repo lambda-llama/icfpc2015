@@ -56,8 +56,12 @@ pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
     for y in (0..board.height).rev() {
         for x in 0..board.width {
             let c = offset_to_cube(&(x as i32, y as i32));
+            let mut candidates = Vec::new();
+            candidates.push(unit.move_corner_to(c));
             for rot in rots.iter() {
-                let moved = unit.move_corner_to(c).apply(&rot);
+                candidates.push(unit.move_corner_to(c).apply(&rot));
+            }
+            for moved in candidates {
                 if board.check_unit_position(&moved) {
                     let score = scoring_function(&board.lock_unit(&moved).0);
                     result.push((moved, score));
@@ -70,9 +74,10 @@ pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
 }
 
 pub fn scoring_function(board: &Board) -> i64 {
-    let row_cost = 100;
+    let penalty: Vec<_> = (0..board.height as i64).rev().map(|i| -i).collect();
+    let full_row_cost = 10000;
     let hole_penalty = 0;
-    return (board.n_full_rows() * row_cost + board.n_clear_top_rows()) as i64 +
+    return (board.n_full_rows() * full_row_cost) as i64 + board.total_sum(&penalty) +
         (board.n_holes() as i64) * hole_penalty;
 }
 
