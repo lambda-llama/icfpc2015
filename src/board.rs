@@ -37,12 +37,12 @@ impl Board {
     }
 
     /// Return `true` if the command is locking the unit.
-    pub fn is_command_locking(&self, unit: &Unit, c: &Command) {
-        unit.apply(c).iter().all(|c| {
-            let Coordinate { x, y } = cube_to_offset(&c);
-            self.is_valid(x, y) && self.is_free(x, y)
-        })
-    }
+    // pub fn is_command_locking(&self, unit: &Unit, c: &Command) {
+    //     unit.apply(c).iter().all(|c| {
+    //         let Coordinate { x, y } = cube_to_offset(&c);
+    //         self.is_valid(x, y) && self.is_free(x, y)
+    //     })
+    // }
 
     pub fn get_correct_commands(&self, unit: &Unit) -> Vec<&Command> {
         ALL_COMMANDS.iter().filter(|c| {
