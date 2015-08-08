@@ -78,11 +78,11 @@ impl Board {
     }
 
     pub fn place_new_unit(&self, unit: &Unit) -> Unit {
-        // let pivot = cube_to_offset(&unit.pivot);
-        // let target_y = pivot.y - unit.border_top();
-        // let target_x = pivot.x - unit.border_left() + (self.width as i32 - unit.width()) / 2;
-        // unit.move_to((target_x, target_y))
-        unit.clone()
+        let (x, y) = cube_to_offset(&unit.pivot);
+        let target_y = y - unit.border_top();
+        let target_x = x - unit.border_left() + (self.width as i32 - unit.width()) / 2;
+        let to = offset_to_cube(&(target_x, target_y));
+        unit.move_to(to)
     }
 
     pub fn lock_unit(&self, unit: &Unit) -> (Board, i32) {
