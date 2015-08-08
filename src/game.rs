@@ -33,6 +33,7 @@ struct GameState {
 }
 
 
+#[derive(Clone)]
 pub struct GamePosition<'a> {
     pub game: &'a Game,
     pub board: Board,

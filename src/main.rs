@@ -22,18 +22,8 @@ fn fetch_game(i: u64) -> formats::Board {
 }
 
 fn main() {
-    let board = fetch_game(10);
-    let mut states = Vec::new();
-    for game in board.games() {
-        for unit in game.source.iter() {
-            let p = strategy::best_position(&unit, &game.board).unwrap();
-            let moves = strategy::route(&unit, &p, &game.board);
-            if moves.is_empty() {
-                break;
-            }
-
-            states.extend(game.play(&moves).iter().map(|p| p.to_state()));
-        }
-    }
-    println!("{}", json::encode(&states).unwrap());
+    let board = fetch_game(0);
+    let game = board.games().into_iter().next().unwrap();
+    let positions: Vec<_> = strategy::process_game(&game).iter().map(|c| c.to_state()).collect();
+    println!("{}", json::encode(&positions).unwrap());
 }
