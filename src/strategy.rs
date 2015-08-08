@@ -42,42 +42,38 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
     path
 }
 
-pub fn best_position(unit: &Unit, board: &Board) -> Option<Unit> {
+pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
+    let result = Vec::new();
     for y in (0..board.height).rev() {
         for x in 0..board.width {
             let c = offset_to_cube(&(x as i32, y as i32));
             let moved = unit.move_corner_to(c);
             if board.check_unit_position(&moved) {
-                return Some(moved)
+                result.push(moved)
             }
         }
     }
-    None
+    result
 }
 
 pub fn process_game(g: &Game) -> Vec<GamePosition> {
     let mut cur_game_pos = GamePosition::start(g);
     let mut commands: Vec<Command> = Vec::new();
     let mut positions: Vec<GamePosition> = vec![cur_game_pos.clone()];
-    loop {
-        let best_pos = best_position(&cur_game_pos.unit, &cur_game_pos.board);
-        match best_pos {
-            Some(target) => {
-                if !cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
-                    break;
-                }
-                assert!(cur_game_pos.board.check_unit_position(&target));
-                let new_commands = route(&cur_game_pos.unit, &target, &cur_game_pos.board);
+    'outer: loop {
+        let best_positions = best_position(&cur_game_pos.unit, &cur_game_pos.board);
+        for target in best_positions {
+            if let Some(new_commands) = route(&cur_game_pos.unit, &target, &cur_game_pos.board) {
                 for cmd in new_commands.iter() {
                     cur_game_pos = cur_game_pos.step(&cmd);
                     positions.push(cur_game_pos.clone())
                 }
                 commands.extend(new_commands);
                 if positions.last().unwrap().next_source == g.source.len() {
-                    break;
+                    break 'outer;
                 }
+                break;
             }
-            _ => break
         }
     }
     return (positions)
