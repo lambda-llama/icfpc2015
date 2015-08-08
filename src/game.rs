@@ -66,7 +66,7 @@ impl<'a> GamePosition<'a> {
     }
 
     fn next_unit(&self) -> Option<GamePosition<'a>> {
-        let board = self.game.board.place_unit(&self.unit);
+        let board = self.game.board.lock_unit(&self.unit);
         if self.next_source + 1 < self.game.source.len() {
             return Some(GamePosition {
                 board: board,
