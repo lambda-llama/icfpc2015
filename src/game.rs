@@ -12,11 +12,8 @@ impl Game {
         let start = GamePosition::start(self);
         result.push(start);
         for m in moves {
-            if let Some(next) = result.last().unwrap().step(m)  {
-                result.push(next);
-            } else {
-                break;
-            }
+            let next = result.last().unwrap().step(m);
+            result.push(next);
         }
         result
     }
@@ -64,34 +61,28 @@ impl<'a> GamePosition<'a> {
         }
     }
 
-    fn next_unit(&self) -> Option<GamePosition<'a>> {
+    fn lock_current_unit(&self) -> GamePosition<'a> {
         let board = self.game.board.lock_unit(&self.unit);
         let unit = self.game.board.place_new_unit(&self.game.source[self.next_source]);
-        if self.next_source + 1 < self.game.source.len() {
-            let unit = board.place_new_unit(&self.game.source[self.next_source]);
-            return Some(GamePosition {
-                board: board,
-                unit: unit,
-                next_source: self.next_source + 1,
-                ..*self
-            });
+        GamePosition {
+            board: board,
+            unit: unit,
+            next_source: self.next_source + 1,
+            ..*self
         }
-        None
     }
 
-    fn step(&self, c: &Command) -> Option<GamePosition<'a>> {
+    fn step(&self, c: &Command) -> GamePosition<'a> {
         let unit = self.unit.apply(c);
         if self.game.board.check_unit_position(&unit) {
-            if self.game.board.get_correct_commands(&unit).len() == 0 {
-                return self.next_unit();
-            }
-            return Some(GamePosition {
+            GamePosition {
                 unit: unit,
                 board: self.board.clone(),
                 ..*self
-            });
+            }
+        } else {
+            self.lock_current_unit()
         }
-        None
     }
 }
 
