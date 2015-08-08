@@ -33,12 +33,14 @@ def main(path, edge=16):
         for row in range(board["height"]):
             for col in range(board["width"]):
                 if any(x == col and y == row for x, y in unit["cells"]):
-                    color = "pink"
+                    color, outline = "black", "white"
                 elif cells[row][col]:
-                    color = "yellow"
+                    color, outline = "yellow", "black"
                 else:
-                    color = "white"
-                outline = "red" if unit["pivot"] == [col, row] else "black"
+                    color, outline = "white", "black"
+
+                if unit["pivot"] == [col, row]:
+                    outline = "yellow"
 
                 coords = list(hexagon_generator(row, col, edge))
                 draw.polygon(coords, outline=outline, fill=color)
