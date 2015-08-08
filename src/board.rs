@@ -53,17 +53,17 @@ impl Board {
     }
 
     pub fn clear_filled_lines(&self, cells: &Vec<Vec<bool>>) -> (Board, i32) {
-        let mut new_cells : Vec<Vec<bool>> = Vec::new();
+        let mut old_cells : Vec<Vec<bool>> = Vec::new();
 
         for line in cells.iter() {
             if !Board::check_line_filled(&line) {
-                new_cells.push(line.clone())
+                old_cells.push(line.clone())
             }
         }
-        let lines_cleared = self.height - new_cells.len();
-        for y in new_cells.len()..self.height {
-            new_cells.push(vec![false; self.width])
-        }
+        let lines_cleared = self.height - old_cells.len();
+        
+        let mut new_cells = vec![vec![false; self.width]; lines_cleared];
+        new_cells.extend(old_cells);
 
         let board = Board {
             cells: Rc::new(new_cells),
