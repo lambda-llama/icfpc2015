@@ -26,6 +26,18 @@ impl Board {
         }
     }
 
+    pub fn n_clear_top_rows(&self) -> usize {
+        self.cells.iter()
+            .take_while(|row| row.iter().all(|c| !c))
+            .count()
+    }
+
+    pub fn n_full_rows(&self) -> usize {
+        self.cells.iter()
+            .filter(|&l| Board::check_line_filled(&l))
+            .count()
+    }
+
     /// Returns `true` if a `unit` is within board boundaries and does
     /// not overlap any of the occupied cells.
     pub fn check_unit_position(&self, unit: &Unit) -> bool {

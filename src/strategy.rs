@@ -55,11 +55,18 @@ pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
             let c = offset_to_cube(&(x as i32, y as i32));
             let moved = unit.move_corner_to(c);
             if board.check_unit_position(&moved) {
-                result.push(moved)
+                let score = scoring_function(&board.lock_unit(&moved).0);
+                result.push((moved, score));
             }
         }
     }
-    result
+    result.sort_by(|&(_, s1), &(_, s2)| s1.cmp(&s2));
+    result.into_iter().map(|(u, _)| u).collect()
+}
+
+pub fn scoring_function(board: &Board) -> i64 {
+    let row_cost = 100;
+    return (board.n_full_rows() * row_cost + board.n_clear_top_rows()) as i64;
 }
 
 pub fn process_game(g: &Game) -> Vec<GamePosition> {
