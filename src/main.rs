@@ -4,7 +4,6 @@ extern crate rand;
 extern crate getopts;
 
 mod formats;
-mod encoder;
 mod board;
 mod game;
 mod scoring;
@@ -45,7 +44,10 @@ fn main() {
     } else {
         let mut solutions = Vec::new();
         for game in board.games() {
-            let (commands, _) = strategy::process_game(&game);
+            let (commands, positions) = strategy::process_game(&game);
+            for (i, p) in positions.iter().enumerate() {
+                println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
+            }
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,

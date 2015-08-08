@@ -40,6 +40,7 @@ pub struct GamePosition<'a> {
     pub game: &'a Game,
     pub board: Board,
     pub unit: Unit,
+    pub sum_unit_size: i32,
     pub next_source: usize,
     pub cleared_lines_prev: i32,
     pub score: i32,
@@ -64,6 +65,7 @@ impl<'a> GamePosition<'a> {
             game: g,
             board: g.board.clone(),
             unit: g.board.place_new_unit(&g.source[0]),
+            sum_unit_size: 0,
             next_source: 1,
             cleared_lines_prev: 0,
             score: 0,
@@ -74,13 +76,15 @@ impl<'a> GamePosition<'a> {
     pub fn lock_current_unit(&self, c: Command) -> GamePosition<'a> {
         let (board, cleared_lines) = self.board.lock_unit(&self.unit);
         let unit = self.board.place_new_unit(&self.game.source[self.next_source]);
-        let new_score = self.score + move_score(unit.size(),
+        let sum_unit_size = self.sum_unit_size + self.unit.size();
+        let new_score = self.score + move_score(self.unit.size(),
                                                 cleared_lines,
                                                 self.cleared_lines_prev);
         GamePosition {
             game: self.game,
             board: board,
             unit: unit,
+            sum_unit_size: sum_unit_size,
             next_source: self.next_source + 1,
             cleared_lines_prev: cleared_lines,
             score: new_score,
