@@ -46,6 +46,7 @@ pub fn best_position(unit: &Unit, board: &Board) -> Option<Unit> {
             let c = offset_to_cube(&(x as i32, y as i32));
             let moved = unit.move_to(c);
             if board.check_unit_position(&moved) {
+                println!("found {:?} (x = {}, y = {})", c, x, y);
                 return Some(moved)
             }
         }

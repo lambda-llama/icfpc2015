@@ -31,7 +31,7 @@ impl Board {
     /// not overlap any of the occupied cells.
     pub fn check_unit_position(&self, unit: &Unit) -> bool {
         unit.iter().all(|c| {
-            let Coordinate { x, y } = cube_to_offset(&c);
+            let (x, y) = cube_to_offset(&c);
             self.is_valid(x, y) && self.is_free(x, y)
         })
     }
@@ -78,15 +78,17 @@ impl Board {
     }
 
     pub fn place_new_unit(&self, unit: &Unit) -> Unit {
-        let target_y = unit.pivot.y - unit.border_top();
-        let target_x = unit.pivot.x  - unit.border_left() + (self.width as i32 - unit.width()) / 2;
-        unit.move_to((target_x, target_y))
+        // let pivot = cube_to_offset(&unit.pivot);
+        // let target_y = pivot.y - unit.border_top();
+        // let target_x = pivot.x - unit.border_left() + (self.width as i32 - unit.width()) / 2;
+        // unit.move_to((target_x, target_y))
+        unit.clone()
     }
 
     pub fn lock_unit(&self, unit: &Unit) -> Board {
         let mut cells = (*self.cells).clone();
         for c in unit.iter() {
-            let Coordinate { x, y } = cube_to_offset(&c);
+            let (x, y) = cube_to_offset(&c);
             assert!(self.is_free(x, y));
             cells[y as usize][x as usize] = true;
         }
@@ -99,18 +101,23 @@ impl Board {
     }
 }
 
-pub fn cube_to_offset<C>(c: &C) -> Coordinate where C: ToCoordinate + Copy {
+pub fn cube_to_offset<C>(c: &C) -> (i32, i32) where C: ToCoordinate + Copy {
     let c = c.to_coordinate();
-    let z = c.x - c.y;
-    return Coordinate {
-        x: c.x + (z + (z & 1)) / 2,
-        y: z
-    }
+    let z = c.z();
+    let col = c.x + (z + (z & 1)) / 2;
+    let row = z;
+    return (col, row)
 }
 
 pub fn offset_to_cube<C>(c: &C) -> Coordinate where C: ToCoordinate + Copy{
     let c = c.to_coordinate();
     let x = c.x - (c.y + (c.y & 1)) / 2;
     let z = c.y;
-    return Coordinate { x: x, y: -x - z }
+    return Coordinate { x: x, y: -(x + z) }
+}
+
+#[test]
+fn offset_cube_id() {
+    assert!(cube_to_offset(&offset_to_cube(&(0, 0))) == (0, 0));
+    assert!(cube_to_offset(&offset_to_cube(&(8, 8))) == (8, 8));
 }

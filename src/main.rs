@@ -26,14 +26,14 @@ fn main() {
     for game in board.games() {
         for unit in game.source.iter() {
             let p = strategy::best_position(&unit, &game.board).unwrap();
-            let moves = strategy::route(&unit, &p, &game.board);
+            // let moves = strategy::route(&unit, &p, &game.board);
     // Command::Move(Direction::YX),
     // Command::Move(Direction::XY),
     // Command::Move(Direction::XZ),
     // Command::Move(Direction::YZ),
     // Command::Rotate(Angle::Left),
     // Command::Rotate(Angle::Right)
-            let moves = vec![game::Command::Move(Direction::YX)];
+            let moves = vec![game::Command::Move(Direction::XY)];
             if moves.is_empty() {
                 break;
             }
