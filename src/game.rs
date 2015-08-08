@@ -1,7 +1,6 @@
 use hex2d::{Angle, Coordinate, Direction, ToCoordinate};
 use board::Board;
 
-
 pub struct Game {
     pub board: Board,
     pub source: Vec<Unit>
