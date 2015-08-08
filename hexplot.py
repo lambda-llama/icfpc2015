@@ -2,7 +2,7 @@ import json
 import math
 import sys
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFont
 
 
 class HexagonGenerator(object):
@@ -22,6 +22,7 @@ class HexagonGenerator(object):
 
 
 def main(path, edge=16):
+    font = ImageFont.truetype("Verdana.ttf", 7)
     for i, data in enumerate(json.load(open(path))):
         board, unit = data["board"], data["unit"]
         hexagon_generator = HexagonGenerator(edge, board["width"],
@@ -43,7 +44,11 @@ def main(path, edge=16):
                 else:
                     color = "white"
 
-                draw.polygon(list(hexagon), outline='black', fill=color)
+                coords = list(hexagon)
+                draw.polygon(coords, outline='black', fill=color)
+                mx = sum(coords[::2]) * 2 / len(coords) - edge / 2
+                my = sum(coords[1::2]) * 2 / len(coords) - edge / 4
+                draw.text((mx, my), str((row, col)), fill="black", font=font)
         image.save("/tmp/step_{:03d}.png".format(i))
 
 
