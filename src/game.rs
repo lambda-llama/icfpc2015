@@ -1,8 +1,6 @@
 use hex2d::{Angle, Coordinate, Direction, ToCoordinate};
 use board::{Board, cube_to_offset, offset_to_cube};
 use scoring::move_score;
-use board::{Board, cube_to_offset};
-use scoring::{move_score};
 
 pub struct Game {
     pub board: Board,
