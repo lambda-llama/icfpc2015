@@ -19,11 +19,13 @@ fn fetch_game(i: u64) -> formats::Board {
 }
 
 fn main() {
-    let game = fetch_game(10).games().into_iter().next().unwrap();
+    let game = fetch_game(0).games().into_iter().next().unwrap();
     // let mut moves: Vec<game::Command> = Vec::new();
     // moves.push(game::Command::Move(Direction::ZX));
     let p = strategy::best_position(&game.source[0], &game.board).unwrap();
-    let moves = strategy::route(&game.source[0], &p, &game.board);
+    let mut moves = strategy::route(&game.source[0], &p, &game.board);
+    let c = moves.clone();
+    moves.extend(c);
     let states: Vec<_> = game.play(&moves).iter().map(|p| p.to_state())
         .collect();
     println!("{}", json::encode(&states).unwrap());
