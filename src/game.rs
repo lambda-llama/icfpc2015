@@ -32,11 +32,11 @@ struct GameState {
 }
 
 
-struct GamePosition<'a> {
-    game: &'a Game,
+pub struct GamePosition<'a> {
+    pub game: &'a Game,
     pub board: Board,
-    unit: Unit,
-    next_source: usize
+    pub unit: Unit,
+    pub next_source: usize
 }
 
 impl<'a> GamePosition<'a> {
@@ -52,7 +52,7 @@ impl<'a> GamePosition<'a> {
         }
     }
 
-    fn start(g: &Game) -> GamePosition {
+    pub fn start(g: &Game) -> GamePosition {
         GamePosition {
             game: g,
             board: g.board.clone(),
@@ -61,7 +61,7 @@ impl<'a> GamePosition<'a> {
         }
     }
 
-    fn lock_current_unit(&self) -> GamePosition<'a> {
+    pub fn lock_current_unit(&self) -> GamePosition<'a> {
         let board = self.game.board.lock_unit(&self.unit);
         let unit = self.game.board.place_new_unit(&self.game.source[self.next_source]);
         GamePosition {
@@ -72,7 +72,7 @@ impl<'a> GamePosition<'a> {
         }
     }
 
-    fn step(&self, c: &Command) -> GamePosition<'a> {
+    pub fn step(&self, c: &Command) -> GamePosition<'a> {
         let unit = self.unit.apply(c);
         if self.game.board.check_unit_position(&unit) {
             GamePosition {
