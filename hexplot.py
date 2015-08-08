@@ -12,7 +12,7 @@ class HexagonGenerator(object):
         self.height = height
 
     def __call__(self, row, col):
-        x = (col + 1 - .5 * (1 - row % 2)) * math.sqrt(3) * self.edge
+        x = 20 + (col + .5 * (1 - row % 2)) * math.sqrt(3) * self.edge
         y = row * 2 * (self.edge - 4)
         for angle in range(30, 360, 60):
             x += math.cos(math.radians(angle)) * self.edge

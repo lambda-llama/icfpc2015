@@ -1,7 +1,7 @@
 use std::rc::Rc;
 use hex2d::{Coordinate, ToCoordinate};
 use game::{Unit, Command, ALL_COMMANDS};
-
+use rand;
 
 #[derive(RustcEncodable, Clone)]
 pub struct Board {
@@ -120,4 +120,10 @@ pub fn offset_to_cube<C>(c: &C) -> Coordinate where C: ToCoordinate + Copy{
 fn offset_cube_id() {
     assert!(cube_to_offset(&offset_to_cube(&(0, 0))) == (0, 0));
     assert!(cube_to_offset(&offset_to_cube(&(8, 8))) == (8, 8));
+
+    for _ in 0..500 {
+        let x = rand::random::<u8>() as i32;
+        let y = rand::random::<u8>() as i32;
+        assert!(cube_to_offset(&offset_to_cube(&(x, y))) == (x, y));
+    }
 }

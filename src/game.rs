@@ -1,5 +1,5 @@
 use hex2d::{Angle, Coordinate, Direction, ToCoordinate};
-use board::{Board, cube_to_offset};
+use board::{Board, cube_to_offset, offset_to_cube};
 
 pub struct Game {
     pub board: Board,
@@ -81,6 +81,7 @@ impl<'a> GamePosition<'a> {
                 ..*self
             }
         } else {
+            println!("LOCKED!");
             self.lock_current_unit()
         }
     }
@@ -99,8 +100,8 @@ impl ToString for Command {
                 let dir_str = match dir {
                     Direction::YX => "West".to_string(),
                     Direction::XY => "East".to_string(),
-                    Direction::XZ => "SW".to_string(),
-                    Direction::YZ => "SE".to_string(),
+                    Direction::ZY => "SW".to_string(),
+                    Direction::ZX => "SE".to_string(),
                     _             => "UP".to_string()
                 };
                 format!("Move: {}", dir_str)
@@ -127,8 +128,8 @@ fn to_string_test() {
 pub static ALL_COMMANDS : [Command; 6] = [
     Command::Move(Direction::YX),
     Command::Move(Direction::XY),
-    Command::Move(Direction::XZ),
-    Command::Move(Direction::YZ),
+    Command::Move(Direction::ZX),
+    Command::Move(Direction::ZY),
     Command::Rotate(Angle::Left),
     Command::Rotate(Angle::Right)
 ];
@@ -175,8 +176,8 @@ impl Unit {
             &Command::Move(d)   => {
                 assert!(d == Direction::YX ||  // West
                         d == Direction::XY ||  // East
-                        d == Direction::XZ ||  // SW
-                        d == Direction::YZ);   // SE
+                        d == Direction::ZY ||  // SW
+                        d == Direction::ZX);   // SE
                 let cells = self.cells.iter().map(|&c| c + d).collect();
                 let pivot = self.pivot + d;
                 Unit { cells: cells, pivot: pivot }
