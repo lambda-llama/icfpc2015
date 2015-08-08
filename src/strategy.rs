@@ -1,6 +1,6 @@
 use std::collections::{VecDeque, HashSet, HashMap};
 
-use hex2d::{Coordinate, Direction};
+use hex2d::{Coordinate, Direction, Angle};
 
 use game::{Command, Unit, ALL_COMMANDS};
 use game::{Game, GamePosition};
@@ -50,17 +50,22 @@ pub fn route(source: &Unit, target: &Unit,
 
 pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
     let mut result = Vec::new();
+    let rots = [
+        Command::Rotate(Angle::Left),
+        Command::Rotate(Angle::Right)];
     for y in (0..board.height).rev() {
         for x in 0..board.width {
             let c = offset_to_cube(&(x as i32, y as i32));
-            let moved = unit.move_corner_to(c);
-            if board.check_unit_position(&moved) {
-                let score = scoring_function(&board.lock_unit(&moved).0);
-                result.push((moved, score));
+            for rot in rots.iter() {
+                let moved = unit.move_corner_to(c).apply(&rot);
+                if board.check_unit_position(&moved) {
+                    let score = scoring_function(&board.lock_unit(&moved).0);
+                    result.push((moved, score));
+                }
             }
         }
     }
-    result.sort_by(|&(_, s1), &(_, s2)| s1.cmp(&s2));
+    result.sort_by(|&(_, s1), &(_, s2)| s2.cmp(&s1));
     result.into_iter().map(|(u, _)| u).collect()
 }
 
