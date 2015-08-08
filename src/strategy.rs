@@ -7,7 +7,8 @@ use game::{Game, GamePosition};
 use board::{Board, offset_to_cube};
 
 /// Find a sequence of commands which transform `source` to `target`.
-pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
+pub fn route(source: &Unit, target: &Unit,
+             board: &Board) -> Option<Vec<Command>> {
     let mut q = VecDeque::new();
     q.push_back(source.clone());
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
@@ -30,20 +31,25 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
         }
     }
 
+    if !parents.contains_key(target) {
+        return None;  // no path found.
+    }
+
     let mut path = Vec::new();
     let mut tip = target;
-    while tip != source && parents.contains_key(&tip) {
+    while tip != source {
+        assert!(parents.contains_key(&tip));
         let (c, ref next) = parents[tip];
         path.push(c);
         tip = next;
     }
     path.push(Command::Move(Direction::ZY));  // lock.
     path.reverse();
-    path
+    Some(path)
 }
 
 pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
-    let result = Vec::new();
+    let mut result = Vec::new();
     for y in (0..board.height).rev() {
         for x in 0..board.width {
             let c = offset_to_cube(&(x as i32, y as i32));
