@@ -23,6 +23,19 @@ impl Game {
     }
 }
 
+#[derive(RustcEncodable)]
+struct UnitState {
+    pivot: (i32, i32),
+    cells: Vec<(i32, i32)>
+}
+
+#[derive(RustcEncodable)]
+struct GameState {
+    pub board: Board,
+    pub unit: UnitState,
+}
+
+
 struct GamePosition<'a> {
     game: &'a Game,
     pub board: Board,
@@ -31,6 +44,18 @@ struct GamePosition<'a> {
 }
 
 impl<'a> GamePosition<'a> {
+    pub fn to_state(&self) -> GameState {
+        let pivot = (self.unit.pivot.x, self.unit.pivot.y);
+        let cells: Vec<(i32, i32)> = self.unit.iter().collect();
+        GameState {
+            board: self.board.clone(),
+            unit: UnitState {
+                pivot: pivot,
+                cells: cells
+            }
+        }
+    }
+
     fn start(g: &Game) -> GamePosition {
         GamePosition {
             game: g,

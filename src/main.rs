@@ -29,6 +29,6 @@ fn main() {
     let moves = strategy::route(&game.source[0], &p, &game.board);
     println!("{:?}", moves);
     for p in game.play(&moves) {
-        println!("{}", json::encode(&p.board).unwrap());
+        println!("{}", json::encode(&p.to_state()).unwrap());
     }
 }
