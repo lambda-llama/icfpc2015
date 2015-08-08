@@ -3,7 +3,7 @@ use std::collections::{VecDeque, HashSet, HashMap};
 use hex2d::Coordinate;
 
 use game::{Command, Unit, ALL_COMMANDS};
-use board::Board;
+use board::{Board, offset_to_cube};
 
 /// Find a sequence of commands which transform `source` to `target`.
 pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
@@ -43,7 +43,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
 pub fn best_position(unit: &Unit, board: &Board) -> Option<Unit> {
     for y in (0..board.height).rev() {
         for x in 0..board.width {
-            let c = Coordinate {x: x as i32, y: y as i32};
+            let c = offset_to_cube(&(x as i32, y as i32));
             let moved = unit.move_to(c);
             if board.check_unit_position(&moved) {
                 return Some(moved)

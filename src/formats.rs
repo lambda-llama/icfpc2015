@@ -3,7 +3,6 @@ use hex2d;
 use game;
 use board;
 
-
 #[derive(Debug, RustcDecodable, RustcEncodable)]
 #[allow(non_snake_case)]
 pub struct Board {
@@ -69,7 +68,7 @@ pub struct Solution {
 
 impl From<Cell> for hex2d::Coordinate {
     fn from(c: Cell) -> hex2d::Coordinate {
-        hex2d::Coordinate {x: c.x, y: c.y}
+        board::offset_to_cube(&(c.x, c.y))
     }
 }
 

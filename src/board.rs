@@ -108,7 +108,8 @@ pub fn cube_to_offset<C>(c: &C) -> Coordinate where C: ToCoordinate + Copy {
     }
 }
 
-pub fn offset_to_cube(c: &Coordinate) -> Coordinate {
+pub fn offset_to_cube<C>(c: &C) -> Coordinate where C: ToCoordinate + Copy{
+    let c = c.to_coordinate();
     let x = c.x - (c.y + (c.y & 1)) / 2;
     let z = c.y;
     return Coordinate { x: x, y: -x - z }
