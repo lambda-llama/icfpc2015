@@ -21,7 +21,7 @@ class HexagonGenerator(object):
 
 
 def main(path, edge=16):
-    font = ImageFont.truetype("arial.ttf", 7)
+    font = ImageFont.truetype("Arial.ttf", 7)
     for i, data in enumerate(json.load(open(path))):
         board, unit = data["board"], data["unit"]
         hexagon_generator = HexagonGenerator(board["width"], board["height"])
@@ -40,13 +40,13 @@ def main(path, edge=16):
                     color, outline = "white", "black"
 
                 if unit["pivot"] == [col, row]:
-                    outline = "yellow"
+                    outline = "red"
 
                 coords = list(hexagon_generator(row, col, edge))
                 draw.polygon(coords, outline=outline, fill=color)
                 mx = sum(coords[::2]) * 2 / len(coords) - edge / 2
                 my = sum(coords[1::2]) * 2 / len(coords) - edge / 4
-                draw.text((mx, my), str((row, col)), fill=outline, font=font)
+                draw.text((mx, my), str((col, row)), fill=outline, font=font)
 
         draw.text((image.width // 2, image.height - 20),
                   data["previous_move"], font=font, fill="black")
