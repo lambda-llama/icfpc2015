@@ -15,8 +15,8 @@ impl Board {
     {
         let mut cells = vec![vec![false; width]; height];
         for (x, y) in filled {
-            assert!(0 <= x && x <= width as i32);
-            assert!(0 <= y && y <= height as i32);
+            assert!(0 <= x && x < width as i32);
+            assert!(0 <= y && y < height as i32);
             cells[y as usize][x as usize] = true;
         }
         Board {
