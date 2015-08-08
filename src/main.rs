@@ -28,7 +28,7 @@ fn main() {
     println!("target = {:?}", p);
     let moves = strategy::route(&game.source[0], &p, &game.board);
     println!("{:?}", moves);
-    for p in game.play(&moves) {
-        println!("{}", json::encode(&p.to_state()).unwrap());
-    }
+    let states: Vec<_> = game.play(&moves).iter().map(|p| p.to_state())
+        .collect();
+    println!("{}", json::encode(&states).unwrap());
 }
