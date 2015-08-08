@@ -49,7 +49,7 @@ def main(path, edge=16):
                 mx = sum(coords[::2]) * 2 / len(coords) - edge / 2
                 my = sum(coords[1::2]) * 2 / len(coords) - edge / 4
                 draw.text((mx, my), str((row, col)), fill="black", font=font)
-        image.save("/tmp/step_{:03d}.png".format(i))
+        image.save("/tmp/step_{:08d}.png".format(i))
 
 
 if __name__ == "__main__":

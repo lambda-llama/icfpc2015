@@ -1,6 +1,6 @@
 use std::collections::{VecDeque, HashSet, HashMap};
 
-use hex2d::Coordinate;
+use hex2d::{Coordinate, Direction};
 
 use game::{Command, Unit, ALL_COMMANDS};
 use game::{Game, GamePosition};
@@ -37,6 +37,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board) -> Vec<Command> {
         path.push(c);
         tip = next;
     }
+    path.push(Command::Move(Direction::ZY));  // lock.
     path.reverse();
     path
 }
@@ -47,7 +48,6 @@ pub fn best_position(unit: &Unit, board: &Board) -> Option<Unit> {
             let c = offset_to_cube(&(x as i32, y as i32));
             let moved = unit.move_corner_to(c);
             if board.check_unit_position(&moved) {
-                println!("found {:?} (x = {}, y = {})", c, x, y);
                 return Some(moved)
             }
         }
