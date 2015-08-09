@@ -53,7 +53,7 @@ def main(path, edge=16):
 
         draw.text((image.width // 2, image.height - 20),
                   data["previous_move"], font=font, fill="black")
-        image.save("/tmp/step_{:08d}.png".format(i))
+        image.save("./solution/step_{:08d}.png".format(i))
 
 
 if __name__ == "__main__":

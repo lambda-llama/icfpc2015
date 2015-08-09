@@ -147,7 +147,7 @@ pub static ALL_COMMANDS : [Command; 6] = [
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
 pub struct Unit {
-    pub cells: Vec<Coordinate>,
+    cells: Vec<Coordinate>,
     pub pivot: Coordinate
 }
 
@@ -162,7 +162,6 @@ impl Unit {
     pub fn iter<'a>(&'a self) -> Box<Iterator<Item=(i32, i32)> + 'a> {
         Box::new(self.cells.iter().map(cube_to_offset))
     }
-
 
     pub fn border_top(&self) -> i32 {
         self.iter().map(|(_x, y)| y).min().unwrap()
@@ -216,7 +215,6 @@ impl Unit {
             pivot: self.pivot + diff
         }
     }
-
 
     pub fn move_to<C>(&self, new_pivot: C) -> Unit
         where C: ToCoordinate + Copy

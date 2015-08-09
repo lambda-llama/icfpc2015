@@ -16,27 +16,8 @@ use std::fs;
 use std::env;
 use rustc_serialize::json;
 
-fn dirty_play<'a>(g: &'a game::Game, cmds: &Vec<game::Command>) -> Vec<game::GamePosition<'a>> {
-    let mut cur_game_pos = game::GamePosition::start(g);
-    let mut positions: Vec<game::GamePosition> = vec![cur_game_pos.clone()];
-    for &cmd in cmds.iter() {
-        if let Some(new_pos) =  cur_game_pos.step(cmd) {
-            cur_game_pos = new_pos;
-            positions.push(cur_game_pos.clone())
-        } else {
-            break
-        }
-    }
-    positions
-}
-
 fn main() {
     let args: Vec<String> = env::args().collect();
-    // let letters = "iiiiiiiimmiiiiiimimmiiiimimimmimimimimmimimimeemimeeeemimimimimiiiiiimmeemimimimimiimimimmeemimimimmeeeemimimimmiiiiiipmiimimimeeemmimimmemimimimiiiiiimeeemimimimimeeemimimimmiiiimemimimmiiiipimeeemimimmiiiippmeeeeemimimimiiiimmimimeemimimeeeemimimiiiipmeeemmimmiimimmmimimeemimimimmeeemimiiiiipmiiiimmeeemimimiiiipmmiipmmimmiippimemimeeeemimmiipppmeeeeemimimmiimipmeeeemimimiimmeeeeemimmeemimmeeeemimiiippmiippmiiimmiimimmmmmeeeemimmiippimmimimeemimimimmeemimimimmeemimimimiimimimeeemmimimmmiiiiipimeemimimimmiiiimimmiiiiiiiimiimimimimeeemmimimimmiiiiiimimmemimimimimmimimimeemimiiiiiiiimiiiimimimiimimimmimmimimimimmeeeemimimimimmmimimimimeemimimimimmmemimimmiiiiiiimiimimimmiiiiiimeeeeemimimimimmimimimmmmemimimmeeeemimimimmiimimimmiiiiiipmeeeeemimimimimmiiiiimmemimimimimmmmimimmeeeemimimimimeeemimimimmiimimimeeemmimimmiiiiiiimimiiiiiimimmiiiiiiiimmimimimimiiiimimimeemimimimimmeeemimimimimiiiiiiimiiiimimmemimimimmeemimimimeeemmimimmiiiiiimmiiiipmmiiimmmimimeemimimeeemmimmiiiippmiiiimiiippimiimimeemimimeeeemimimiiiipmeemimimiimiimimmimeeemimimmippipmmiimemimmipimeeeemimmeemimiippimeeeeemimimmmimmmeeeemimimiiipimmiipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm";
-    // let cmds:Vec<_> = letters.chars()
-    //     .map(encoder::symbols2cmd)
-    //     .take(84)
-    //     .collect();
 
     let mut opts = Options::new();
     opts.reqopt("f", "", "File containing JSON encoded input", "FILENAME");
@@ -58,7 +39,6 @@ fn main() {
     if matches.opt_present("d") {
         let game = board.games().into_iter().next().unwrap();
         let (_, positions) = strategy::play(&game);
-        // let positions = dirty_play(&game, &cmds);
         let positions: Vec<_> = positions.iter().map(|c| c.to_state()).collect();
         println!("{}", json::encode(&positions).unwrap());
     } else {
@@ -71,7 +51,7 @@ fn main() {
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
-                tag: "CW/CCW".to_string(),
+                tag: "rage of the".to_string(),
                 solution: encoder::encode(commands)
             });
         }
