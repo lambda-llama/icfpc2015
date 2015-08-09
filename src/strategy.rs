@@ -86,9 +86,9 @@ pub fn best_position<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>> {
 pub fn scoring_function(board: &Board) -> i64 {
     let penalty: Vec<_> = (0..board.height as i64).rev().map(|i| -i).collect();
     let full_row_cost = 10000;
-    let hole_penalty = 0;
-    return (board.n_full_rows() * full_row_cost) as i64 + board.total_sum(&penalty) +
-        (board.n_holes() as i64) * hole_penalty;
+    // let hole_penalty = 0;
+    return (board.n_full_rows() * full_row_cost) as i64 + board.total_sum(&penalty);
+        // + (board.n_holes() as i64) * hole_penalty;
 }
 
 pub fn play<'a>(g: &'a Game) -> (Vec<Command>, Vec<GamePosition<'a>>) {
