@@ -246,8 +246,8 @@ pub fn play<'a>(g: &'a Game, phrases: &Vec<Vec<Command>>) -> (Vec<Command>, Vec<
     let mut i = 0;
     'outer: while cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
         i += 1;
-        let mut stderr = io::stderr();
-        writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
+        // let mut stderr = io::stderr();
+        // writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
         let best_positions = best_position(&cur_game_pos.unit,
                                            &cur_game_pos.next_unit(),
                                            &cur_game_pos.board);

@@ -5,7 +5,7 @@ import os
 
 def main():
     subprocess.call(['cargo', 'build', '--release'])
-    for i in os.listdir("problems/"):
+    for i in os.listdir("bench_problems/"):
         if i.endswith(".json"):
             print("run: {}".format(i))
             problem_path = "problems/{}".format(i)
