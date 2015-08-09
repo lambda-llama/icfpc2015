@@ -70,12 +70,13 @@ fn main() {
     } else {
         let mut solutions = Vec::new();
         let mut score = 0;
-        for game in board.games() {
+        let games = board.games();
+        for game in &games {
             let (commands, positions) = strategy::play(&game);
             //for (i, p) in positions.iter().enumerate() {
             //  println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
             //}
-            score = positions.last().unwrap().score;
+            score += positions.last().unwrap().score;
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
@@ -84,7 +85,7 @@ fn main() {
             });
         }
         if matches.opt_present("s") {
-            println!("score: {}", score);
+            println!("score: {}", score / games.len() as i32);
         } else {
             println!("{}", json::encode(&solutions).unwrap());
         }
