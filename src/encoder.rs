@@ -62,7 +62,7 @@ fn symbol_to_command(sym: char) -> Command {
     }
 }
 
-fn phrase_to_commands(phrase: &String) -> Vec<Command> {
+pub fn phrase_to_commands(phrase: &String) -> Vec<Command> {
     phrase.chars().map(symbol_to_command).collect()
 }
 
@@ -103,4 +103,12 @@ pub fn encode(commands: &Vec<Command>, power_phrases: &Vec<String>) -> String {
         }
     };
     result.into_iter().collect()
+}
+
+#[test]
+fn encode_it_right() {
+    assert!(phrase_to_commands(&"ei!".to_string()) ==
+            vec![Command::Move(Direction::XY),
+                 Command::Move(Direction::ZX),
+                 Command::Move(Direction::YX)]);
 }

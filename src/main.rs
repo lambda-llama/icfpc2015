@@ -56,13 +56,14 @@ fn main() {
     };
 
     let path = matches.opt_str("f").unwrap();
-    let power_phrases = matches.opt_strs("p");
+    let phrases = matches.opt_strs("p");
     let mut data = String::new();
     fs::File::open(path).unwrap().read_to_string(&mut data).unwrap();
     let board: formats::Board = json::decode(&data).unwrap();
     if matches.opt_present("d") {
         let game = board.games().into_iter().next().unwrap();
-        let (_, positions) = strategy::play(&game);
+        let (_, positions) = strategy::play(
+            &game, &phrases.iter().map(encoder::phrase_to_commands).collect());
         // let positions = dirty_play(&game, &cmds);
         let positions: Vec<_> = positions.iter().map(|c| c.to_state())
             .collect();
@@ -72,7 +73,8 @@ fn main() {
         let mut score = 0;
         let games = board.games();
         for game in &games {
-            let (commands, positions) = strategy::play(&game);
+            let (commands, positions) = strategy::play(
+                &game, &phrases.iter().map(encoder::phrase_to_commands).collect());
             //for (i, p) in positions.iter().enumerate() {
             //  println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
             //}
@@ -80,8 +82,8 @@ fn main() {
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
-                tag: "CW/CCW".to_string(),
-                solution: encoder::encode(&commands, &power_phrases)
+                tag: "edgar strikes again!".to_string(),
+                solution: encoder::encode(&commands, &phrases)
             });
         }
         if matches.opt_present("s") {

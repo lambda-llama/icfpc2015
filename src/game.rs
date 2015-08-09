@@ -1,5 +1,5 @@
 use std::hash::{Hash, Hasher};
-use std::cmp::{Eq, PartialEq};
+use std::cmp::{Eq, PartialEq, Ord, PartialOrd, Ordering};
 
 use hex2d::{Angle, Coordinate, Direction, ToCoordinate, Position, ToDirection};
 
@@ -168,6 +168,18 @@ impl<'a> PartialEq for Unit<'a> {
 }
 
 impl<'a> Eq for Unit<'a> {}
+
+impl<'a> PartialOrd for Unit<'a> {
+    fn partial_cmp(&self, other: &Unit) -> Option<Ordering> {
+        self.position.partial_cmp(&other.position)
+    }
+}
+
+impl<'a> Ord for Unit<'a> {
+    fn cmp(&self, other: &Unit) -> Ordering {
+        self.position.cmp(&other.position)
+    }
+}
 
 impl<'a> Unit<'a> {
     pub fn new(cells: &'a Vec<Coordinate>) -> Unit<'a> {

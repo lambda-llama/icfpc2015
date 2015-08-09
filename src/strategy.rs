@@ -1,5 +1,6 @@
-use std::collections::{VecDeque, HashMap};
+use std::collections::{BinaryHeap, HashMap, HashSet};
 use std::io::{self, Write};
+use std::i32;
 
 use hex2d::Angle;
 
@@ -7,27 +8,75 @@ use game::{Command, Unit, ALL_COMMANDS};
 use game::{Game, GamePosition};
 use board::{Board, offset_to_cube};
 
+fn xy(unit: &Unit) -> Vec<(i32, i32)> {
+    let mut acc: Vec<(i32, i32)> = unit.iter().collect();
+    acc.sort();
+    acc
+}
+
 /// Find a sequence of commands which transform `source` to `target`.
-pub fn route(source: &Unit, target: &Unit,
-             board: &Board) -> Option<Vec<Command>> {
-    let mut q = VecDeque::new();
-    q.push_back(source.clone());
+pub fn route(source: &Unit, target: &Unit, board: &Board,
+             phrases: &Vec<Vec<Command>>) -> Option<Vec<Command>> {
+    let penalty = 1000;
+    let mut seen: HashSet<Vec<(i32, i32)>> = HashSet::new();
+    let mut q: BinaryHeap<(i32, Unit)> = BinaryHeap::new();  // max-heap.
+    q.push((0, source.clone()));
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
+    let mut dist: HashMap<Unit, i32> = HashMap::new();
+    dist.insert(source.clone(), 0);
     // XXX we use parent links instead of a separate hash set
     // for visited nodes.
     parents.insert(source.clone(), (ALL_COMMANDS[0], source.clone()));
-    while let Some(tip) = q.pop_front() {
+    while let Some((d, tip)) = q.pop() {
         assert!(board.check_unit_position(&tip));
         assert!(parents.contains_key(&tip));
         if tip == *target {
-            break;
+            break
+        } else if d > *dist.get(&tip).unwrap_or(&i32::max_value()) {
+            continue
         }
 
-        for cj in ALL_COMMANDS.iter() {
-            let next = tip.apply(cj);
-            if !parents.contains_key(&next) && board.check_unit_position(&next) {
-                q.push_back(next.clone());
-                parents.insert(next, (*cj, tip.clone()));
+        let d = -d;
+
+        'phrases: for phrase in phrases.iter() {
+            let mut next = tip.clone();
+            for c in phrase.iter() {
+                next = next.apply(c);
+                if parents.contains_key(&next) || !board.check_unit_position(&next) {
+                    continue 'phrases
+                }
+
+                let xy = xy(&next);
+                if seen.contains(&xy) {
+                    continue 'phrases
+                }
+            }
+
+            if d + 1 < *dist.get(&next).unwrap_or(&i32::max_value()) {
+                q.push((-(d + 1), next.clone()));
+                dist.insert(next.clone(), d + 1);
+                let mut next = tip.clone();
+                for c in phrase {
+                    let next_next = next.apply(c);
+                    dist.insert(next_next.clone(), 0);
+                    parents.insert(next_next.clone(), (*c, next));
+                    seen.insert(xy(&next_next));
+                    next = next_next;
+                }
+            }
+        }
+
+        for c in ALL_COMMANDS.iter() {
+            let next = tip.apply(c);
+            if board.check_unit_position(&next) {
+                let xy = xy(&next);
+                if !seen.contains(&xy) &&
+                   d + penalty < *dist.get(&next).unwrap_or(&i32::max_value()) {
+                    q.push((-(d + penalty), next.clone()));
+                    dist.insert(next.clone(), d + penalty);
+                    parents.insert(next.clone(), (*c, tip.clone()));
+                    seen.insert(xy);
+                }
             }
         }
     }
@@ -92,7 +141,7 @@ pub fn scoring_function(board: &Board) -> i64 {
         // + (board.n_holes() as i64) * hole_penalty;
 }
 
-pub fn play<'a>(g: &'a Game) -> (Vec<Command>, Vec<GamePosition<'a>>) {
+pub fn play<'a>(g: &'a Game, phrases: &Vec<Vec<Command>>) -> (Vec<Command>, Vec<GamePosition<'a>>) {
     let mut cur_game_pos = GamePosition::start(g);
     let mut commands: Vec<Command> = Vec::new();
     let mut positions: Vec<GamePosition> = vec![cur_game_pos.clone()];
@@ -105,7 +154,7 @@ pub fn play<'a>(g: &'a Game) -> (Vec<Command>, Vec<GamePosition<'a>>) {
         let mut moved = false;
         for target in best_positions {
             if let Some(new_commands) = route(&cur_game_pos.unit, &target,
-                                              &cur_game_pos.board) {
+                                              &cur_game_pos.board, phrases) {
                 for &cmd in new_commands.iter() {
                     if let Some(new_pos) = cur_game_pos.step(cmd) {
                         cur_game_pos = new_pos;
