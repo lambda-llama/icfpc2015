@@ -137,12 +137,12 @@ fn to_string_test() {
 
 
 pub static ALL_COMMANDS : [Command; 6] = [
-    Command::Move(Direction::YX),
-    Command::Move(Direction::XY),
-    Command::Move(Direction::ZX),
-    Command::Move(Direction::ZY),
-    Command::Rotate(Angle::Left),
-    Command::Rotate(Angle::Right)
+    Command::Move(Direction::YX),  // West
+    Command::Move(Direction::XY),  // East
+    Command::Move(Direction::ZX),  // SW
+    Command::Move(Direction::ZY),  // SE
+    Command::Rotate(Angle::Left),  // CCW
+    Command::Rotate(Angle::Right)  // CW
 ];
 
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -188,17 +188,11 @@ impl Unit {
     pub fn apply(&self, c: &Command) -> Unit {
         match c {
             &Command::Move(d)   => {
-                assert!(d == Direction::YX ||  // West
-                        d == Direction::XY ||  // East
-                        d == Direction::ZY ||  // SE
-                        d == Direction::ZX);   // SW
                 let cells = self.cells.iter().map(|&c| c + d).collect();
                 let pivot = self.pivot + d;
                 Unit { cells: cells, pivot: pivot }
             },
             &Command::Rotate(a) => {
-                // Read as clockwise and counterclockwise.
-                assert!(a == Angle::Right || a == Angle::Left);
                 let cells = self.cells.iter()
                     .map(|c| c.rotate_around(self.pivot, a)).collect();
                 Unit { cells: cells, ..*self }
