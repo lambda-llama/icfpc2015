@@ -117,6 +117,10 @@ impl Board {
         let unit = Unit::new(cells);
         let (x, y) = cube_to_offset(&unit.position.to_coordinate());
         let target_y = y - unit.border_top();
+        let unit = unit.move_to(offset_to_cube(&(0, target_y)));
+
+        let (x, y) = cube_to_offset(&unit.position.to_coordinate());
+        let target_y = y - unit.border_top();
         let target_x = x - unit.border_left() + (self.width as i32 - unit.width()) / 2;
         let to = offset_to_cube(&(target_x, target_y));
         unit.move_to(to)
