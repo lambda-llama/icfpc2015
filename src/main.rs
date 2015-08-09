@@ -15,6 +15,7 @@ use getopts::Options;
 use std::io::Read;
 use std::fs;
 use std::env;
+use std::sync::Mutex;
 use rustc_serialize::json;
 
 // fn dirty_play<'a>(g: &'a game::Game, cmds: &Vec<game::Command>) -> Vec<game::GamePosition<'a>> {
@@ -38,6 +39,7 @@ use rustc_serialize::json;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+    let program = args[0].clone();
 
     let mut opts = Options::new();
     opts.reqopt("f", "", "File containing JSON encoded input", "FILENAME");
@@ -46,6 +48,7 @@ fn main() {
     opts.optopt("c", "", "Number of processor cores available", "NUMBER");
     opts.optmulti("p", "", "Phrase of power", "STRING");
     opts.optflag("d", "", "Toggle debug mode");
+    opts.optflag("s", "", "Scoring mode");
     opts.optflag("h", "help", "Print help");
     let matches = match opts.parse(&args[1..]) {
         Ok(m)  => { m }
@@ -66,18 +69,24 @@ fn main() {
         println!("{}", json::encode(&positions).unwrap());
     } else {
         let mut solutions = Vec::new();
+        let mut score = 0;
         for game in board.games() {
-            let (commands, _positions) = strategy::play(&game);
-            // for (i, p) in positions.iter().enumerate() {
-            //     println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
-            // }
+            let (commands, positions) = strategy::play(&game);
+            //for (i, p) in positions.iter().enumerate() {
+            //  println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
+            //}
+            score = positions.last().unwrap().score;
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
-                tag: "do it two times".to_string(),
+                tag: "CW/CCW".to_string(),
                 solution: encoder::encode(&commands, &power_phrases)
             });
         }
-        println!("{}", json::encode(&solutions).unwrap());
+        if matches.opt_present("s") {
+            println!("score: {}", score);
+        } else {
+            println!("{}", json::encode(&solutions).unwrap());
+        }
     }
 }
