@@ -10,6 +10,8 @@ use board::{Board, offset_to_cube};
 
 fn xy(unit: &Unit) -> Vec<(i32, i32)> {
     let mut acc: Vec<(i32, i32)> = unit.iter().collect();
+    let pivot = unit.position.coord;
+    acc.push((pivot.x, pivot.y));
     acc.sort();
     acc
 }
@@ -17,8 +19,8 @@ fn xy(unit: &Unit) -> Vec<(i32, i32)> {
 /// Find a sequence of commands which transform `source` to `target`.
 pub fn route(source: &Unit, target: &Unit, board: &Board,
              phrases: &Vec<Vec<Command>>) -> Option<Vec<Command>> {
+    let max = phrases.iter().map(|v| v.len()).max().unwrap_or(0);
     let penalty = 1000;
-    let mut seen: HashSet<Vec<(i32, i32)>> = HashSet::new();
     let mut q: BinaryHeap<(i32, Unit)> = BinaryHeap::new();  // max-heap.
     q.push((0, source.clone()));
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
@@ -45,22 +47,17 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
                 if parents.contains_key(&next) || !board.check_unit_position(&next) {
                     continue 'phrases
                 }
-
-                let xy = xy(&next);
-                if seen.contains(&xy) {
-                    continue 'phrases
-                }
             }
 
-            if d + 1 < *dist.get(&next).unwrap_or(&i32::max_value()) {
-                q.push((-(d + 1), next.clone()));
-                dist.insert(next.clone(), d + 1);
+            let score = (max - phrase.len() + 1) as i32;
+            if d + score < *dist.get(&next).unwrap_or(&i32::max_value()) {
+                q.push((-(d + score), next.clone()));
+                dist.insert(next.clone(), d + score);
                 let mut next = tip.clone();
                 for c in phrase {
                     let next_next = next.apply(c);
                     dist.insert(next_next.clone(), 0);
                     parents.insert(next_next.clone(), (*c, next));
-                    seen.insert(xy(&next_next));
                     next = next_next;
                 }
             }
@@ -69,13 +66,10 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
         for c in ALL_COMMANDS.iter() {
             let next = tip.apply(c);
             if board.check_unit_position(&next) {
-                let xy = xy(&next);
-                if !seen.contains(&xy) &&
-                   d + penalty < *dist.get(&next).unwrap_or(&i32::max_value()) {
+                if d + penalty < *dist.get(&next).unwrap_or(&i32::max_value()) {
                     q.push((-(d + penalty), next.clone()));
                     dist.insert(next.clone(), d + penalty);
                     parents.insert(next.clone(), (*c, tip.clone()));
-                    seen.insert(xy);
                 }
             }
         }
@@ -85,12 +79,22 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
         return None;  // no path found.
     }
 
+    let mut seen: HashSet<Vec<(i32, i32)>> = HashSet::new();
+    seen.insert(xy(&target));
+
     let mut path = Vec::new();
     let mut tip = target;
     while tip != source {
         assert!(parents.contains_key(&tip));
         let (c, ref next) = parents[tip];
         path.push(c);
+        let xy = xy(&next);
+        if seen.contains(&xy) {
+            // got cycles? try again.
+            return route(source, target, board, &Vec::new());
+        }
+
+        seen.insert(xy);
         tip = next;
     }
     path.reverse();
