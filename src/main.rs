@@ -32,11 +32,11 @@ fn dirty_play<'a>(g: &'a game::Game, cmds: &Vec<game::Command>) -> Vec<game::Gam
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let letters = "iiiiiiiimmiiiiiimimmiiiimimimmimimimimmimimimeemimeeeemimimimimiiiiiimmeemimimimimiimimimmeemimimimmeeeemimimimmiiiiiipmiimimimeeemmimimmemimimimiiiiiimeeemimimimimeeemimimimmiiiimemimimmiiiipimeeemimimmiiiippmeeeeemimimimiiiimmimimeemimimeeeemimimiiiipmeeemmimmiimimmmimimeemimimimmeeemimiiiiipmiiiimmeeemimimiiiipmmiipmmimmiippimemimeeeemimmiipppmeeeeemimimmiimipmeeeemimimiimmeeeeemimmeemimmeeeemimiiippmiippmiiimmiimimmmmmeeeemimmiippimmimimeemimimimmeemimimimmeemimimimiimimimeeemmimimmmiiiiipimeemimimimmiiiimimmiiiiiiiimiimimimimeeemmimimimmiiiiiimimmemimimimimmimimimeemimiiiiiiiimiiiimimimiimimimmimmimimimimmeeeemimimimimmmimimimimeemimimimimmmemimimmiiiiiiimiimimimmiiiiiimeeeeemimimimimmimimimmmmemimimmeeeemimimimmiimimimmiiiiiipmeeeeemimimimimmiiiiimmemimimimimmmmimimmeeeemimimimimeeemimimimmiimimimeeemmimimmiiiiiiimimiiiiiimimmiiiiiiiimmimimimimiiiimimimeemimimimimmeeemimimimimiiiiiiimiiiimimmemimimimmeemimimimeeemmimimmiiiiiimmiiiipmmiiimmmimimeemimimeeemmimmiiiippmiiiimiiippimiimimeemimimeeeemimimiiiipmeemimimiimiimimmimeeemimimmippipmmiimemimmipimeeeemimmeemimiippimeeeeemimimmmimmmeeeemimimiiipimmiipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm";
-    let cmds:Vec<_> = letters.chars()
-        .map(encoder::symbols2cmd)
-        .take(84)
-        .collect();
+    // let letters = "iiiiiiiimmiiiiiimimmiiiimimimmimimimimmimimimeemimeeeemimimimimiiiiiimmeemimimimimiimimimmeemimimimmeeeemimimimmiiiiiipmiimimimeeemmimimmemimimimiiiiiimeeemimimimimeeemimimimmiiiimemimimmiiiipimeeemimimmiiiippmeeeeemimimimiiiimmimimeemimimeeeemimimiiiipmeeemmimmiimimmmimimeemimimimmeeemimiiiiipmiiiimmeeemimimiiiipmmiipmmimmiippimemimeeeemimmiipppmeeeeemimimmiimipmeeeemimimiimmeeeeemimmeemimmeeeemimiiippmiippmiiimmiimimmmmmeeeemimmiippimmimimeemimimimmeemimimimmeemimimimiimimimeeemmimimmmiiiiipimeemimimimmiiiimimmiiiiiiiimiimimimimeeemmimimimmiiiiiimimmemimimimimmimimimeemimiiiiiiiimiiiimimimiimimimmimmimimimimmeeeemimimimimmmimimimimeemimimimimmmemimimmiiiiiiimiimimimmiiiiiimeeeeemimimimimmimimimmmmemimimmeeeemimimimmiimimimmiiiiiipmeeeeemimimimimmiiiiimmemimimimimmmmimimmeeeemimimimimeeemimimimmiimimimeeemmimimmiiiiiiimimiiiiiimimmiiiiiiiimmimimimimiiiimimimeemimimimimmeeemimimimimiiiiiiimiiiimimmemimimimmeemimimimeeemmimimmiiiiiimmiiiipmmiiimmmimimeemimimeeemmimmiiiippmiiiimiiippimiimimeemimimeeeemimimiiiipmeemimimiimiimimmimeeemimimmippipmmiimemimmipimeeeemimmeemimiippimeeeeemimimmmimmmeeeemimimiiipimmiipmemimmeeeemimimiipipimmipppimeeemimmpppmmpmeeeeemimmemm";
+    // let cmds:Vec<_> = letters.chars()
+    //     .map(encoder::symbols2cmd)
+    //     .take(84)
+    //     .collect();
 
     let mut opts = Options::new();
     opts.reqopt("f", "", "File containing JSON encoded input", "FILENAME");
@@ -57,8 +57,8 @@ fn main() {
     let board: formats::Board = json::decode(&data).unwrap();
     if matches.opt_present("d") {
         let game = board.games().into_iter().next().unwrap();
-        // let (_, positions) = strategy::play(&game);
-        let positions = dirty_play(&game, &cmds);
+        let (_, positions) = strategy::play(&game);
+        // let positions = dirty_play(&game, &cmds);
         let positions: Vec<_> = positions.iter().map(|c| c.to_state()).collect();
         println!("{}", json::encode(&positions).unwrap());
     } else {

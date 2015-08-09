@@ -139,16 +139,16 @@ impl Board {
 pub fn cube_to_offset<C>(c: &C) -> (i32, i32) where C: ToCoordinate + Copy {
     let c = c.to_coordinate();
     let z = c.z();
-    let col = c.x + (z + (z & 1)) / 2;
+    let col = c.x + (z - (z & 1)) / 2;
     let row = z;
     return (col, row)
 }
 
 pub fn offset_to_cube<C>(c: &C) -> Coordinate where C: ToCoordinate + Copy{
     let c = c.to_coordinate();
-    let x = c.x - (c.y + (c.y & 1)) / 2;
+    let x = c.x - (c.y - (c.y & 1)) / 2;
     let z = c.y;
-    return Coordinate { x: x, y: -(x + z) }
+    return Coordinate { x: x, y: -x -z }
 }
 
 #[test]
