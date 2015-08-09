@@ -73,6 +73,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
     let mut q: BinaryHeap<(i32, Unit)> = BinaryHeap::new();  // max-heap.
     q.push((0, source.clone()));
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
+    let mut power: HashSet<Unit> = HashSet::new();
     let mut dist: HashMap<Unit, i32> = HashMap::new();
     dist.insert(source.clone(), 0);
     // XXX we use parent links instead of a separate hash set
@@ -83,7 +84,8 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
         assert!(parents.contains_key(&tip));
         if tip == *target {
             break
-        } else if d > *dist.get(&tip).unwrap_or(&i32::max_value()) {
+        } else if d > *dist.get(&tip).unwrap_or(&i32::max_value()) ||
+            power.contains(&tip) {
             continue
         }
 
@@ -98,6 +100,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
                 }
             }
 
+            power.insert(tip.clone());
             let score = (max - phrase.len() + 1) as i32;
             if d + score < *dist.get(&next).unwrap_or(&i32::max_value()) {
                 q.push((-(d + score), next.clone()));
