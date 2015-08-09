@@ -80,7 +80,7 @@ fn main() {
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
-                tag: "despair no more".to_string(),
+                tag: "beeter".to_string(),
                 solution: encoder::encode(&commands, &phrases)
             });
         }
