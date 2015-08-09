@@ -180,7 +180,7 @@ fn reachable<'a>(source: &Unit<'a>, board: &Board) -> HashSet<Unit<'a>> {
     seen
 }
 
-pub fn best_position<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>> {
+pub fn candidates<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>>{
     let mut result = Vec::new();
     let r = reachable(unit, board);
     let rots = [
@@ -198,11 +198,19 @@ pub fn best_position<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>> {
             }
             for moved in candidates {
                 if board.check_unit_position(&moved) && r.contains(&moved) {
-                    let score = scoring_function(&board.lock_unit(&moved).0);
-                    result.push((moved, score));
+                    result.push(moved);
                 }
             }
         }
+    }
+    result
+}
+
+pub fn best_position<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>> {
+    let mut result = Vec::new();
+    for moved in candidates(unit, board) {
+        let score = scoring_function(&board.lock_unit(&moved).0);
+        result.push((moved, score));
     }
     result.sort_by(|&(_, s1), &(_, s2)| s2.cmp(&s1));
     result.into_iter().map(|(u, _)| u).collect()
@@ -216,6 +224,7 @@ pub fn scoring_function(board: &Board) -> i64 {
         // + (board.n_holes() as i64) * hole_penalty;
 }
 
+
 pub fn play<'a>(g: &'a Game, phrases: &Vec<Vec<Command>>) -> (Vec<Command>, Vec<GamePosition<'a>>) {
     let mut cur_game_pos = GamePosition::start(g);
     let mut commands: Vec<Command> = Vec::new();
@@ -223,8 +232,8 @@ pub fn play<'a>(g: &'a Game, phrases: &Vec<Vec<Command>>) -> (Vec<Command>, Vec<
     let mut i = 0;
     'outer: while cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
         i += 1;
-        let mut stderr = io::stderr();
-        writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
+        // let mut stderr = io::stderr();
+        // writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
         let best_positions = best_position(&cur_game_pos.unit, &cur_game_pos.board);
         let mut moved = false;
         for target in best_positions {

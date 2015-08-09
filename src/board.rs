@@ -1,7 +1,6 @@
 use std::rc::Rc;
 use hex2d::{Coordinate, ToCoordinate};
 use game::Unit;
-use rand;
 
 #[derive(RustcEncodable, Clone)]
 pub struct Board {
@@ -116,7 +115,7 @@ impl Board {
 
     pub fn place_new_unit<'a>(&self, cells: &'a Vec<Coordinate>) -> Unit<'a> {
         let unit = Unit::new(cells);
-        let (x, y) = cube_to_offset(&unit.position.to_coordinate());
+        let (_, y) = cube_to_offset(&unit.position.to_coordinate());
         let target_y = y - unit.border_top();
         let unit = unit.move_to(offset_to_cube(&(0, target_y)));
 
