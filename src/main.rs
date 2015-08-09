@@ -15,7 +15,6 @@ use getopts::Options;
 use std::io::Read;
 use std::fs;
 use std::env;
-use std::sync::Mutex;
 use rustc_serialize::json;
 
 // fn dirty_play<'a>(g: &'a game::Game, cmds: &Vec<game::Command>) -> Vec<game::GamePosition<'a>> {
@@ -39,7 +38,6 @@ use rustc_serialize::json;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-    let program = args[0].clone();
 
     let mut opts = Options::new();
     opts.reqopt("f", "", "File containing JSON encoded input", "FILENAME");
@@ -82,7 +80,7 @@ fn main() {
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
-                tag: "edgar strikes again!".to_string(),
+                tag: "despair no more".to_string(),
                 solution: encoder::encode(&commands, &phrases)
             });
         }
