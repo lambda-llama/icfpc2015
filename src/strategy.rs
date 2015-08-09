@@ -184,6 +184,7 @@ fn reachable<'a>(source: &Unit<'a>, board: &Board) -> HashSet<Unit<'a>> {
 
 pub fn best_position<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>> {
     let mut result = Vec::new();
+    let r = reachable(unit, board);
     let rots = [
         Command::Rotate(Angle::Left),
         Command::Rotate(Angle::Right)];
@@ -198,7 +199,7 @@ pub fn best_position<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>> {
                 candidates.push(moved.apply(&rot).apply(&rot));
             }
             for moved in candidates {
-                if board.check_unit_position(&moved) {
+                if board.check_unit_position(&moved) && r.contains(&moved) {
                     let score = scoring_function(&board.lock_unit(&moved).0);
                     result.push((moved, score));
                 }
@@ -224,8 +225,8 @@ pub fn play<'a>(g: &'a Game, phrases: &Vec<Vec<Command>>) -> (Vec<Command>, Vec<
     let mut i = 0;
     'outer: while cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
         i += 1;
-        let mut stderr = io::stderr();
-        writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
+        // let mut stderr = io::stderr();
+        // writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
         let best_positions = best_position(&cur_game_pos.unit, &cur_game_pos.board);
         let mut moved = false;
         for target in best_positions {
