@@ -1,6 +1,6 @@
-use std::collections::{VecDeque, HashSet, HashMap};
+use std::collections::{VecDeque, HashMap};
 
-use hex2d::{Direction, Angle};
+use hex2d::Angle;
 
 use game::{Command, Unit, ALL_COMMANDS};
 use game::{Game, GamePosition};
@@ -12,21 +12,21 @@ pub fn route(source: &Unit, target: &Unit,
     let mut q = VecDeque::new();
     q.push_back(source.clone());
     let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
-    let mut seen: HashSet<Unit> = HashSet::new();
-    seen.insert(source.clone());
+    // XXX we use parent links instead of a separate hash set
+    // for visited nodes.
+    parents.insert(source.clone(), (ALL_COMMANDS[0], source.clone()));
     while let Some(tip) = q.pop_front() {
         assert!(board.check_unit_position(&tip));
-        assert!(seen.contains(&tip));
+        assert!(parents.contains_key(&tip));
         if tip == *target {
             break;
         }
 
         for cj in ALL_COMMANDS.iter() {
             let next = tip.apply(cj);
-            if !seen.contains(&next) && board.check_unit_position(&next) {
+            if !parents.contains_key(&next) && board.check_unit_position(&next) {
                 q.push_back(next.clone());
-                parents.insert(next.clone(), (*cj, tip.clone()));
-                seen.insert(next);
+                parents.insert(next, (*cj, tip.clone()));
             }
         }
     }
