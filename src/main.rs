@@ -2,6 +2,7 @@ extern crate hex2d;
 extern crate rustc_serialize;
 extern crate rand;
 extern crate getopts;
+extern crate simple_parallel;
 
 mod formats;
 mod board;
@@ -14,6 +15,7 @@ use getopts::Options;
 use std::io::Read;
 use std::fs;
 use std::env;
+use std::sync::Mutex;
 use rustc_serialize::json;
 
 fn main() {
