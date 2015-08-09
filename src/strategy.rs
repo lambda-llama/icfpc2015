@@ -206,7 +206,8 @@ pub fn candidates<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>>{
     result
 }
 
-pub fn best_position<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>> {
+pub fn best_position<'a>(unit: &Unit<'a>, _next_unit: &Option<Unit<'a>>,
+                         board: &Board) -> Vec<Unit<'a>> {
     let mut result = Vec::new();
     for moved in candidates(unit, board) {
         let score = scoring_function(&board.lock_unit(&moved).0);
@@ -234,7 +235,9 @@ pub fn play<'a>(g: &'a Game, phrases: &Vec<Vec<Command>>) -> (Vec<Command>, Vec<
         i += 1;
         // let mut stderr = io::stderr();
         // writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
-        let best_positions = best_position(&cur_game_pos.unit, &cur_game_pos.board);
+        let best_positions = best_position(&cur_game_pos.unit,
+                                           &cur_game_pos.next_unit(),
+                                           &cur_game_pos.board);
         let mut moved = false;
         for target in best_positions {
             if let Some(new_commands) = route(&cur_game_pos.unit, &target,

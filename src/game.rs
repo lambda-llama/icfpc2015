@@ -39,6 +39,11 @@ pub struct GamePosition<'a> {
 }
 
 impl<'a> GamePosition<'a> {
+    pub fn next_unit(&self) -> Option<Unit<'a>> {
+        self.game.source.get(self.next_source)
+            .map(|u| self.board.place_new_unit(u))
+    }
+
     pub fn to_state(&self) -> GameState {
         let cells: Vec<(i32, i32)> = self.unit.iter().collect();
         GameState {
