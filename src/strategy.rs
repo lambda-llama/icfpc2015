@@ -1,4 +1,4 @@
-use std::collections::{BinaryHeap, HashMap, HashSet};
+use std::collections::{VecDeque, BinaryHeap, HashMap, HashSet};
 use std::io::{self, Write};
 use std::i32;
 
@@ -108,6 +108,29 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
     }
 
     panic!("sai wat?");
+}
+
+fn reachable<'a>(source: &Unit<'a>, target: &Unit<'a>, board: &Board) -> HashSet<Unit<'a>> {
+    let mut q = VecDeque::new();
+    q.push_back(source.clone());
+    let mut seen: HashSet<Unit<'a>> = HashSet::new();
+    seen.insert(source.clone());
+    while let Some(tip) = q.pop_front() {
+        assert!(board.check_unit_position(&tip));
+        if tip == *target {
+            break;
+        }
+
+        for cj in ALL_COMMANDS.iter() {
+            let next = tip.apply(cj);
+            if !seen.contains(&next) && board.check_unit_position(&next) {
+                q.push_back(next.clone());
+                seen.insert(next);
+            }
+        }
+    }
+
+    seen
 }
 
 pub fn best_position<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>> {
