@@ -16,6 +16,55 @@ fn xy(unit: &Unit) -> Vec<(i32, i32)> {
     acc
 }
 
+pub fn route_because_it_works(source: &Unit, target: &Unit,
+                              board: &Board) -> Option<Vec<Command>> {
+    let mut q = VecDeque::new();
+    q.push_back(source.clone());
+    let mut parents: HashMap<Unit, (Command, Unit)> = HashMap::new();
+    // XXX we use parent links instead of a separate hash set
+    // for visited nodes.
+    parents.insert(source.clone(), (ALL_COMMANDS[0], source.clone()));
+    while let Some(tip) = q.pop_front() {
+        assert!(board.check_unit_position(&tip));
+        assert!(parents.contains_key(&tip));
+        if tip == *target {
+            break;
+        }
+
+        for cj in ALL_COMMANDS.iter() {
+            let next = tip.apply(cj);
+            if !parents.contains_key(&next) && board.check_unit_position(&next) {
+                q.push_back(next.clone());
+                parents.insert(next, (*cj, tip.clone()));
+            }
+        }
+    }
+
+    if !parents.contains_key(target) {
+        return None;  // no path found.
+    }
+
+    let mut path = Vec::new();
+    let mut tip = target;
+    while tip != source {
+        assert!(parents.contains_key(&tip));
+        let (c, ref next) = parents[tip];
+        path.push(c);
+        tip = next;
+    }
+    path.reverse();
+
+    for c in ALL_COMMANDS.iter() {
+        let locked = target.apply(c);
+        if !board.check_unit_position(&locked) {
+            path.push(*c);
+            return Some(path)
+        }
+    }
+
+    panic!("sai wat?");
+}
+
 /// Find a sequence of commands which transform `source` to `target`.
 pub fn route(source: &Unit, target: &Unit, board: &Board,
              phrases: &Vec<Vec<Command>>) -> Option<Vec<Command>> {
@@ -91,7 +140,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
         let xy = xy(&next);
         if seen.contains(&xy) {
             // got cycles? try again.
-            return route(source, target, board, &Vec::new());
+            return route_because_it_works(source, target, board);
         }
 
         seen.insert(xy);
@@ -110,7 +159,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
     panic!("sai wat?");
 }
 
-fn reachable<'a>(source: &Unit<'a>, target: &Unit<'a>, board: &Board) -> HashSet<Unit<'a>> {
+fn reachable<'a>(source: &Unit<'a>, board: &Board) -> HashSet<Unit<'a>> {
     let mut q = VecDeque::new();
     q.push_back(source.clone());
     let mut seen: HashSet<Unit<'a>> = HashSet::new();
