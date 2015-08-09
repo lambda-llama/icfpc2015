@@ -6,12 +6,12 @@ use hex2d::Angle;
 
 use game::{Command, Unit, ALL_COMMANDS};
 use game::{Game, GamePosition};
-use board::{Board, offset_to_cube};
+use board::{Board, offset_to_cube, cube_to_offset};
 
 fn xy(unit: &Unit) -> Vec<(i32, i32)> {
     let mut acc: Vec<(i32, i32)> = unit.iter().collect();
     let pivot = unit.position.coord;
-    acc.push((pivot.x, pivot.y));
+    acc.push(cube_to_offset(&pivot));
     acc.sort();
     acc
 }
@@ -151,6 +151,7 @@ pub fn route(source: &Unit, target: &Unit, board: &Board,
     for c in ALL_COMMANDS.iter() {
         let locked = target.apply(c);
         if !board.check_unit_position(&locked) {
+            assert!(!seen.contains(&xy(&locked)));
             path.push(*c);
             return Some(path)
         }
@@ -222,8 +223,8 @@ pub fn play<'a>(g: &'a Game, phrases: &Vec<Vec<Command>>) -> (Vec<Command>, Vec<
     let mut i = 0;
     'outer: while cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
         i += 1;
-        // let mut stderr = io::stderr();
-        // writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
+        let mut stderr = io::stderr();
+        writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
         let best_positions = best_position(&cur_game_pos.unit, &cur_game_pos.board);
         let mut moved = false;
         for target in best_positions {
