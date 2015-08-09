@@ -37,6 +37,23 @@ fn get_symbols(c: Command) -> [char; 6] {
     }
 }
 
+pub fn symbols2cmd(c: char) -> Command {
+    let commands = [
+        Command::Move(Direction::YX),
+        Command::Move(Direction::XY),
+        Command::Move(Direction::ZX),
+        Command::Move(Direction::ZY),
+        Command::Rotate(Angle::Left),
+        Command::Rotate(Angle::Right)];
+    for &cmd in commands.iter() {
+        if get_symbols(cmd).contains(&c) {
+            return cmd;
+        }
+    }
+
+    panic!("oh noes!!!")
+}
+
 pub fn encode(commands: Vec<Command>) -> String {
     let mut res = Vec::new();
     for c in commands {
