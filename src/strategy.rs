@@ -180,6 +180,18 @@ fn reachable<'a>(source: &Unit<'a>, board: &Board) -> HashSet<Unit<'a>> {
     seen
 }
 
+
+fn can_be_locked<'a>(unit: &Unit<'a>, board: &Board) -> bool {
+    for c in ALL_COMMANDS.iter() {
+        let locked = unit.apply(c);
+        if !board.check_unit_position(&locked) {
+            return true
+        }
+    }
+    return false;
+}
+
+
 pub fn candidates<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>>{
     let mut result = Vec::new();
     let r = reachable(unit, board);
@@ -197,7 +209,8 @@ pub fn candidates<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>>{
                 candidates.push(moved.apply(&rot).apply(&rot));
             }
             for moved in candidates {
-                if board.check_unit_position(&moved) && r.contains(&moved) {
+                if board.check_unit_position(&moved) && r.contains(&moved)
+                    && can_be_locked(&moved, board) {
                     result.push(moved);
                 }
             }
@@ -233,8 +246,8 @@ pub fn play<'a>(g: &'a Game, phrases: &Vec<Vec<Command>>) -> (Vec<Command>, Vec<
     let mut i = 0;
     'outer: while cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
         i += 1;
-        // let mut stderr = io::stderr();
-        // writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
+        let mut stderr = io::stderr();
+        writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
         let best_positions = best_position(&cur_game_pos.unit,
                                            &cur_game_pos.next_unit(),
                                            &cur_game_pos.board);
