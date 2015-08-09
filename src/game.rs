@@ -1,4 +1,8 @@
+use std::hash::{Hash, Hasher};
+use std::cmp::{Eq, PartialEq};
+
 use hex2d::{Angle, Coordinate, Direction, ToCoordinate, Position, ToDirection};
+
 use board::{Board, cube_to_offset};
 use scoring::move_score;
 
@@ -145,93 +149,25 @@ pub static ALL_COMMANDS : [Command; 6] = [
     Command::Rotate(Angle::Right)  // CW
 ];
 
-// #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-// pub struct Unit {
-//     cells: Vec<Coordinate>,
-//     pub pivot: Coordinate
-// }
-
-// impl Unit {
-//     pub fn new(pivot: Coordinate, cells: Vec<Coordinate>) -> Unit {
-//         Unit {
-//             pivot: pivot,
-//             cells: cells
-//         }
-//     }
-
-//     pub fn iter<'a>(&'a self) -> Box<Iterator<Item=(i32, i32)> + 'a> {
-//         Box::new(self.cells.iter().map(cube_to_offset))
-//     }
-
-//     pub fn border_top(&self) -> i32 {
-//         self.iter().map(|(_x, y)| y).min().unwrap()
-//     }
-
-//     pub fn border_left(&self) -> i32 {
-//         self.iter().map(|(x, _y)| x).min().unwrap()
-//     }
-
-//     pub fn border_right(&self) -> i32 {
-//         self.iter().map(|(x, _y)| x).max().unwrap()
-//     }
-
-//     pub fn width(&self) -> i32 {
-//         let result = self.border_right() - self.border_left() + 1;
-//         assert!(result > 0);
-//         result
-//     }
-
-//     pub fn size(&self) -> i32 {
-//         self.cells.len() as i32
-//     }
-
-//     pub fn apply(&self, c: &Command) -> Unit {
-//         match c {
-//             &Command::Move(d)   => {
-//                 assert!(d == Direction::YX ||  // West
-//                         d == Direction::XY ||  // East
-//                         d == Direction::ZY ||  // SE
-//                         d == Direction::ZX);   // SW
-//                 let cells = self.cells.iter().map(|&c| c + d).collect();
-//                 let pivot = self.pivot + d;
-//                 Unit { cells: cells, pivot: pivot }
-//             },
-//             &Command::Rotate(a) => {
-//                 // Read as clockwise and counterclockwise.
-//                 assert!(a == Angle::Right || a == Angle::Left);
-//                 let cells = self.cells.iter()
-//                     .map(|c| c.rotate_around(self.pivot, a)).collect();
-//                 Unit { cells: cells, ..*self }
-//             }
-//         }
-//     }
-
-//     pub fn move_corner_to<C>(&self, to: C) -> Unit where C: ToCoordinate + Copy {
-//         let cell = self.cells.first().unwrap().clone();
-//         let diff = to.to_coordinate() - cell;
-//         Unit {
-//             cells: self.cells.iter()
-//                 .map(|&c| c + diff).collect(),
-//             pivot: self.pivot + diff
-//         }
-//     }
-
-//     pub fn move_to<C>(&self, new_pivot: C) -> Unit
-//         where C: ToCoordinate + Copy
-//     {
-//         Unit {
-//             cells: self.cells.iter()
-//                 .map(|&c| c - self.pivot + new_pivot).collect(),
-//             pivot: new_pivot.to_coordinate()
-//         }
-//     }
-// }
-
-#[derive(Clone, Debug, PartialEq, Eq, Hash)]
+#[derive(Clone, Debug)]
 pub struct Unit<'a> {
     cells: &'a Vec<Coordinate>,
     pub position: Position,
 }
+
+impl<'a> Hash for Unit<'a> {
+    fn hash<H>(&self, state: &mut H) where H: Hasher {
+        self.position.hash(state)
+    }
+}
+
+impl<'a> PartialEq for Unit<'a> {
+    fn eq(&self, other: &Unit) -> bool {
+        self.position == other.position
+    }
+}
+
+impl<'a> Eq for Unit<'a> {}
 
 impl<'a> Unit<'a> {
     pub fn new(cells: &'a Vec<Coordinate>) -> Unit<'a> {
