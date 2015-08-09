@@ -39,7 +39,9 @@ fn main() {
     if matches.opt_present("d") {
         let game = board.games().into_iter().next().unwrap();
         let (_, positions) = strategy::play(&game);
-        let positions: Vec<_> = positions.iter().map(|c| c.to_state()).collect();
+        let positions: Vec<_> = positions.iter().map(|c| c.to_state())
+            // .take(10)
+            .collect();
         println!("{}", json::encode(&positions).unwrap());
     } else {
         let mut solutions = Vec::new();

@@ -113,8 +113,9 @@ impl Board {
         !self.cells[y as usize][x as usize]
     }
 
-    pub fn place_new_unit(&self, unit: &Unit) -> Unit {
-        let (x, y) = cube_to_offset(&unit.pivot);
+    pub fn place_new_unit<'a>(&self, cells: &'a Vec<Coordinate>) -> Unit<'a> {
+        let unit = Unit::new(cells);
+        let (x, y) = cube_to_offset(&unit.position.to_coordinate());
         let target_y = y - unit.border_top();
         let target_x = x - unit.border_left() + (self.width as i32 - unit.width()) / 2;
         let to = offset_to_cube(&(target_x, target_y));

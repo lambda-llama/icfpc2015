@@ -1,10 +1,10 @@
-use hex2d::{Angle, Coordinate, Direction, ToCoordinate};
+use hex2d::{Angle, Coordinate, Direction, ToCoordinate, Position, ToDirection};
 use board::{Board, cube_to_offset};
 use scoring::move_score;
 
 pub struct Game {
     pub board: Board,
-    pub source: Vec<Unit>,
+    pub source: Vec<Vec<Coordinate>>,
     pub seed: u64
 }
 
@@ -26,7 +26,7 @@ struct GameState {
 pub struct GamePosition<'a> {
     pub game: &'a Game,
     pub board: Board,
-    pub unit: Unit,
+    pub unit: Unit<'a>,
     pub sum_unit_size: i32,
     pub next_source: usize,
     pub cleared_lines_prev: i32,
@@ -40,7 +40,7 @@ impl<'a> GamePosition<'a> {
         GameState {
             board: self.board.clone(),
             unit: UnitState {
-                pivot: cube_to_offset(&self.unit.pivot),
+                pivot: cube_to_offset(&self.unit.position.to_coordinate()),
                 cells: cells
             },
             previous_move: self.previous_move.map(|c| c.to_string()).unwrap_or("".to_string())
@@ -145,22 +145,114 @@ pub static ALL_COMMANDS : [Command; 6] = [
     Command::Rotate(Angle::Right)  // CW
 ];
 
+// #[derive(Clone, Debug, PartialEq, Eq, Hash)]
+// pub struct Unit {
+//     cells: Vec<Coordinate>,
+//     pub pivot: Coordinate
+// }
+
+// impl Unit {
+//     pub fn new(pivot: Coordinate, cells: Vec<Coordinate>) -> Unit {
+//         Unit {
+//             pivot: pivot,
+//             cells: cells
+//         }
+//     }
+
+//     pub fn iter<'a>(&'a self) -> Box<Iterator<Item=(i32, i32)> + 'a> {
+//         Box::new(self.cells.iter().map(cube_to_offset))
+//     }
+
+//     pub fn border_top(&self) -> i32 {
+//         self.iter().map(|(_x, y)| y).min().unwrap()
+//     }
+
+//     pub fn border_left(&self) -> i32 {
+//         self.iter().map(|(x, _y)| x).min().unwrap()
+//     }
+
+//     pub fn border_right(&self) -> i32 {
+//         self.iter().map(|(x, _y)| x).max().unwrap()
+//     }
+
+//     pub fn width(&self) -> i32 {
+//         let result = self.border_right() - self.border_left() + 1;
+//         assert!(result > 0);
+//         result
+//     }
+
+//     pub fn size(&self) -> i32 {
+//         self.cells.len() as i32
+//     }
+
+//     pub fn apply(&self, c: &Command) -> Unit {
+//         match c {
+//             &Command::Move(d)   => {
+//                 assert!(d == Direction::YX ||  // West
+//                         d == Direction::XY ||  // East
+//                         d == Direction::ZY ||  // SE
+//                         d == Direction::ZX);   // SW
+//                 let cells = self.cells.iter().map(|&c| c + d).collect();
+//                 let pivot = self.pivot + d;
+//                 Unit { cells: cells, pivot: pivot }
+//             },
+//             &Command::Rotate(a) => {
+//                 // Read as clockwise and counterclockwise.
+//                 assert!(a == Angle::Right || a == Angle::Left);
+//                 let cells = self.cells.iter()
+//                     .map(|c| c.rotate_around(self.pivot, a)).collect();
+//                 Unit { cells: cells, ..*self }
+//             }
+//         }
+//     }
+
+//     pub fn move_corner_to<C>(&self, to: C) -> Unit where C: ToCoordinate + Copy {
+//         let cell = self.cells.first().unwrap().clone();
+//         let diff = to.to_coordinate() - cell;
+//         Unit {
+//             cells: self.cells.iter()
+//                 .map(|&c| c + diff).collect(),
+//             pivot: self.pivot + diff
+//         }
+//     }
+
+//     pub fn move_to<C>(&self, new_pivot: C) -> Unit
+//         where C: ToCoordinate + Copy
+//     {
+//         Unit {
+//             cells: self.cells.iter()
+//                 .map(|&c| c - self.pivot + new_pivot).collect(),
+//             pivot: new_pivot.to_coordinate()
+//         }
+//     }
+// }
+
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
-pub struct Unit {
-    cells: Vec<Coordinate>,
-    pub pivot: Coordinate
+pub struct Unit<'a> {
+    cells: &'a Vec<Coordinate>,
+    pub position: Position,
 }
 
-impl Unit {
-    pub fn new(pivot: Coordinate, cells: Vec<Coordinate>) -> Unit {
+impl<'a> Unit<'a> {
+    pub fn new(cells: &'a Vec<Coordinate>) -> Unit<'a> {
         Unit {
-            pivot: pivot,
-            cells: cells
+            cells: cells,
+            position: Position::new((0, 0).to_coordinate(), Direction::from_int(0))
         }
     }
 
-    pub fn iter<'a>(&'a self) -> Box<Iterator<Item=(i32, i32)> + 'a> {
-        Box::new(self.cells.iter().map(cube_to_offset))
+        fn apply_to_coord(p: &Position, c: &Coordinate) -> Coordinate {
+            let angle = p.to_direction() - Direction::from_int(0);
+            let shift = p.to_coordinate();
+            c.rotate_around_zero(angle) + shift
+        }
+
+    pub fn iter<'b>(&'b self) -> Box<Iterator<Item=(i32, i32)> + 'b> {
+        let p = self.position;
+        let it = self.cells.iter().map(move |&c| {
+                cube_to_offset(&Unit::apply_to_coord(&p, &c))
+        });
+        Box::new(it)
     }
 
     pub fn border_top(&self) -> i32 {
@@ -185,38 +277,41 @@ impl Unit {
         self.cells.len() as i32
     }
 
-    pub fn apply(&self, c: &Command) -> Unit {
+    pub fn apply(&self, c: &Command) -> Unit<'a> {
         match c {
             &Command::Move(d)   => {
-                let cells = self.cells.iter().map(|&c| c + d).collect();
-                let pivot = self.pivot + d;
-                Unit { cells: cells, pivot: pivot }
+                assert!(d == Direction::YX ||  // West
+                        d == Direction::XY ||  // East
+                        d == Direction::ZY ||  // SE
+                        d == Direction::ZX);   // SW
+                let position = self.position + d.to_coordinate();
+                Unit { cells: self.cells, position: position}
             },
             &Command::Rotate(a) => {
-                let cells = self.cells.iter()
-                    .map(|c| c.rotate_around(self.pivot, a)).collect();
-                Unit { cells: cells, ..*self }
+                // Read as clockwise and counterclockwise.
+                assert!(a == Angle::Right || a == Angle::Left);
+                let position = self.position + a;
+                Unit { cells: self.cells, position: position}
             }
         }
     }
 
-    pub fn move_corner_to<C>(&self, to: C) -> Unit where C: ToCoordinate + Copy {
-        let cell = self.cells.first().unwrap().clone();
+    pub fn move_corner_to<C>(&self, to: C) -> Unit<'a> where C: ToCoordinate + Copy {
+        let cell = Unit::apply_to_coord(&self.position, self.cells.first().unwrap());
         let diff = to.to_coordinate() - cell;
         Unit {
-            cells: self.cells.iter()
-                .map(|&c| c + diff).collect(),
-            pivot: self.pivot + diff
+            cells: self.cells,
+            position: self.position + diff
         }
     }
 
-    pub fn move_to<C>(&self, new_pivot: C) -> Unit
+    pub fn move_to<C>(&self, target: C) -> Unit<'a>
         where C: ToCoordinate + Copy
     {
+        let diff = target.to_coordinate() - self.position.to_coordinate();
         Unit {
-            cells: self.cells.iter()
-                .map(|&c| c - self.pivot + new_pivot).collect(),
-            pivot: new_pivot.to_coordinate()
+            cells: self.cells,
+            position: self.position + diff
         }
     }
 }

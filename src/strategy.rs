@@ -56,7 +56,7 @@ pub fn route(source: &Unit, target: &Unit,
     panic!("sai wat?");
 }
 
-pub fn best_position(unit: &Unit, board: &Board) -> Vec<Unit> {
+pub fn best_position<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>> {
     let mut result = Vec::new();
     let rots = [
         Command::Rotate(Angle::Left),
@@ -91,7 +91,7 @@ pub fn scoring_function(board: &Board) -> i64 {
         (board.n_holes() as i64) * hole_penalty;
 }
 
-pub fn play(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
+pub fn play<'a>(g: &'a Game) -> (Vec<Command>, Vec<GamePosition<'a>>) {
     let mut cur_game_pos = GamePosition::start(g);
     let mut commands: Vec<Command> = Vec::new();
     let mut positions: Vec<GamePosition> = vec![cur_game_pos.clone()];
@@ -102,7 +102,7 @@ pub fn play(g: &Game) -> (Vec<Command>, Vec<GamePosition>) {
             if let Some(new_commands) = route(&cur_game_pos.unit, &target,
                                               &cur_game_pos.board) {
                 for &cmd in new_commands.iter() {
-                    if let Some(new_pos) =  cur_game_pos.step(cmd) {
+                    if let Some(new_pos) = cur_game_pos.step(cmd) {
                         cur_game_pos = new_pos;
                         positions.push(cur_game_pos.clone())
                     } else {
