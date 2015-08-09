@@ -65,9 +65,9 @@ fn main() {
         let mut solutions = Vec::new();
         for game in board.games() {
             let (commands, positions) = strategy::play(&game);
-            for (i, p) in positions.iter().enumerate() {
-                println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
-            }
+            // for (i, p) in positions.iter().enumerate() {
+            //     println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
+            // }
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
