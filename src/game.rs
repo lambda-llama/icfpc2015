@@ -102,7 +102,7 @@ impl<'a> GamePosition<'a> {
     }
 }
 
-#[derive(Clone, Copy, Debug)]
+#[derive(Clone, Copy, PartialEq, Eq, Debug)]
 pub enum Command {
     Move(Direction),
     Rotate(Angle)

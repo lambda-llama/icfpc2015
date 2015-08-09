@@ -20,6 +20,7 @@ use rustc_serialize::json;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+    let program = args[0].clone();
 
     let mut opts = Options::new();
     opts.reqopt("f", "", "File containing JSON encoded input", "FILENAME");
@@ -35,6 +36,7 @@ fn main() {
     };
 
     let path = matches.opt_str("f").unwrap();
+    let power_phrases = matches.opt_strs("p");
     let mut data = String::new();
     fs::File::open(path).unwrap().read_to_string(&mut data).unwrap();
     let board: formats::Board = json::decode(&data).unwrap();
@@ -48,15 +50,15 @@ fn main() {
     } else {
         let mut solutions = Vec::new();
         for game in board.games() {
-            let (commands, positions) = strategy::play(&game);
-            // for (i, p) in positions.iter().enumerate() {
-            //     println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
-            // }
+            let (commands, positions) = strategy::process_game(&game);
+            for (i, p) in positions.iter().enumerate() {
+                //println!("turn: {} score: {}, sum_size: {}", i, p.score, p.sum_unit_size);
+            }
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
-                tag: "rage of the".to_string(),
-                solution: encoder::encode(commands)
+                tag: "CW/CCW".to_string(),
+                solution: encoder::encode(&commands, &power_phrases)
             });
         }
         println!("{}", json::encode(&solutions).unwrap());
