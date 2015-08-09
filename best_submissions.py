@@ -20,8 +20,6 @@ for _, v in per_problem.items():
 
 submissions = []
 for k, v in per_problem.items():
-    if k[0] != 0:
-        continue
     tag = 'the best'
     v = v[0]
     submission = {
