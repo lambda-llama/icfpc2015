@@ -74,7 +74,7 @@ fn main() {
             solutions.push(formats::Solution {
                 problemId: board.id,
                 seed: game.seed,
-                tag: "CW/CCW".to_string(),
+                tag: "do it two times".to_string(),
                 solution: encoder::encode(&commands, &power_phrases)
             });
         }

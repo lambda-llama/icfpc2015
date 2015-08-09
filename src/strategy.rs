@@ -1,4 +1,5 @@
 use std::collections::{VecDeque, HashMap};
+use std::io::{self, Write};
 
 use hex2d::Angle;
 
@@ -95,7 +96,11 @@ pub fn play<'a>(g: &'a Game) -> (Vec<Command>, Vec<GamePosition<'a>>) {
     let mut cur_game_pos = GamePosition::start(g);
     let mut commands: Vec<Command> = Vec::new();
     let mut positions: Vec<GamePosition> = vec![cur_game_pos.clone()];
+    let mut i = 0;
     'outer: while cur_game_pos.board.check_unit_position(&cur_game_pos.unit) {
+        i += 1;
+        let mut stderr = io::stderr();
+        writeln!(&mut stderr, "{} out of {}", i, g.source.len()).unwrap();
         let best_positions = best_position(&cur_game_pos.unit, &cur_game_pos.board);
         let mut moved = false;
         for target in best_positions {
