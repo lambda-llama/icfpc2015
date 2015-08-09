@@ -166,9 +166,6 @@ fn reachable<'a>(source: &Unit<'a>, board: &Board) -> HashSet<Unit<'a>> {
     seen.insert(source.clone());
     while let Some(tip) = q.pop_front() {
         assert!(board.check_unit_position(&tip));
-        if tip == *target {
-            break;
-        }
 
         for cj in ALL_COMMANDS.iter() {
             let next = tip.apply(cj);
