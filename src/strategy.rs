@@ -219,11 +219,24 @@ pub fn candidates<'a>(unit: &Unit<'a>, board: &Board) -> Vec<Unit<'a>>{
     result
 }
 
-pub fn best_position<'a>(unit: &Unit<'a>, _next_unit: &Option<Unit<'a>>,
+pub fn best_position<'a>(unit: &Unit<'a>, next_unit: &Option<Unit<'a>>,
                          board: &Board) -> Vec<Unit<'a>> {
     let mut result = Vec::new();
     for moved in candidates(unit, board) {
-        let score = scoring_function(&board.lock_unit(&moved).0);
+        let board_with_moved = board.lock_unit(&moved).0;
+        let score = match next_unit {
+            &None => scoring_function(&board_with_moved),
+            &Some(ref next) => {
+                if board_with_moved.check_unit_position(&next) {
+                    candidates(next, &board_with_moved).iter()
+                        .map(|c| scoring_function(&board_with_moved.lock_unit(&c).0))
+                        .max().unwrap_or(0)
+                } else {
+                     scoring_function(&board_with_moved)
+                }
+
+            }
+        };
         result.push((moved, score));
     }
     result.sort_by(|&(_, s1), &(_, s2)| s2.cmp(&s1));
